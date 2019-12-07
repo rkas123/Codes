@@ -1,0 +1,45 @@
+#include <iostream>
+
+using namespace std;
+void factorial(int* A, int n)
+{
+    int i=1;
+    for(i=2;i<=n;i++)
+    {
+        for(int j=0;j<1000;j++)
+            A[j]*=i;
+
+        int rem, quo;
+        for(int j=0;j<=n;j++)
+            {
+                quo=A[j]/10;
+                A[j]%=10;
+                A[j+1]+=quo;
+            }
+    }
+}
+void print( int *A)
+{int flag;
+    for(int i=999;i>0;i--)
+        if(A[i]!=0)
+        {
+            flag=i;
+            break;
+        }
+    for(int i=flag;i>=0;i--)
+        cout<<A[i];
+
+}
+
+int main()
+{
+    int n;
+    cin>>n;
+
+    int A[1000]={0};
+    A[0]=1;
+    factorial(A,n);
+    cout<<"The Factorial of "<<n<<" is : "<<endl;
+    print(A);
+    return 0;
+}
