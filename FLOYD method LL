@@ -1,0 +1,63 @@
+#include<iostream>
+using namespace std;
+class node{
+    public:
+    int data;
+    node* next;
+    node(int data)
+    {
+        this->data=data;
+        this->next=NULL;
+    }
+};
+void insert(node* &head, int data)
+{
+    if(head==NULL)
+    {head= new node(data);
+     return;}
+     node*temp = head;
+     while(temp->next!=NULL)
+     {
+         temp=temp->next;
+     }
+     node* n=new node(data);
+     temp->next=n;
+}
+void build(node*&head)
+{
+    int data;
+    cin>>data;
+    while(data!=-1)
+    {
+        insert(head,data);
+        cin>>data;
+    }
+}
+void floyd( node* head)
+{
+    node* slow=head;
+    node* fast=head;
+    while(slow!=NULL)
+    {
+        fast=fast->next->next;
+        slow=slow->next;
+        if(slow==fast)
+        {
+            slow=head;
+            while(slow!=fast)
+            {
+                cout<<slow->data<<" ";
+                slow=slow->next;
+                fast=fast->next->next;
+            }
+
+        }
+    }
+
+}
+int main() {
+    node* head=NULL;
+    build(head);
+    floyd(head);
+	return 0;
+}
