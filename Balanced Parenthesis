@@ -1,0 +1,39 @@
+#include <iostream>
+#include <stack>
+#include <stdio.h>
+#include <string>
+#include <cstdio>
+
+using namespace std;
+bool check(char*ch)
+{
+    stack<char> s;
+    int i=0;
+    for(;ch[i]!='\0';i++)
+    {
+        if(ch[i]=='(')
+            s.push(ch[i]);
+        else if(ch[i]==')') 
+        {
+            if(s.empty())
+            {
+                return false;
+            }
+            else
+            {
+                s.pop();
+            }
+        }
+    }
+    return s.empty();
+}
+int main() {
+    char ch[1000];
+    cin.getline(ch,1000,'\n');
+    bool isValid=check(ch);
+    if(isValid==1)
+    cout<<"Valid";
+    else 
+    cout<<"Invalid";
+return 0;
+}
