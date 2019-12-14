@@ -1,0 +1,56 @@
+#include <iostream>
+#include <stack>
+using namespace std;
+void print(stack<int> s)
+{
+    while(!s.empty())
+    {
+        cout<<s.top()<<endl;
+        s.pop();
+    }
+}
+int main() {
+    stack<int> s;
+    int min,data;
+    int n;
+    cin>>n;
+    cin>>data;
+    min=data;
+    s.push(data);
+    
+    for(int i=1;i<n;i++)
+    {
+        cin>>data;
+        if(data>min)
+        {
+            s.push(data);
+        }
+        else
+        {
+            
+            int temp=((2*data)-min);
+            s.push(temp);
+            min=data;
+        }
+    }
+    cout<<"\nThe stack after insertion is"<<endl;
+    print(s);
+    cout<<"\nThe min values in order of deletion is"<<endl;
+    while(!s.empty())
+    {
+        if(s.top()>=min)
+        {
+            cout<<min<<endl;
+            s.pop();
+        }
+        else
+        {
+            cout<<(2*min-s.top())<<endl;
+            min=(2*min-s.top());
+            s.pop();
+            
+        }
+
+    }
+    return 0;
+}
