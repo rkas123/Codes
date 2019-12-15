@@ -1,0 +1,88 @@
+#include<iostream>
+using namespace std;
+template < typename T>
+class Queue{
+    T* arr;
+    int f;
+    int r;
+    int ms;
+    int cs;
+    public:
+    Queue(int data)
+    {
+        f=0;
+        cs=0;
+        r=ms-1;
+        arr= new T[data];
+        ms=data;
+    }
+    public:
+    void push(T data)
+    {
+        if(!isfull())
+        {
+            r=(r+1)%ms;
+            arr[r]=data;
+            cs++;
+        }
+    }
+    bool isfull()
+    {
+        return cs==ms;
+    }
+    bool isempty()
+    {
+        return cs==0;
+    }
+    void pop()
+    {
+        while(!isempty())
+        {
+            f=(f+1)%ms;
+        }
+    }
+    T front()
+    {
+        return arr[f];
+    }
+    int operator [](int data)
+    {
+        return arr[data];
+    }
+};
+int main() {
+    int n,i=0,data;
+    cin>>n;
+    Queue <int> Q(n);
+    for(;i<n;i++)
+    {
+        cin>>data;
+        Q.push(data);
+    }
+i=0;
+
+
+while(i<n)
+{int flag=0;
+    int j=(i+1)%n;
+    while(j!=i)
+    {
+        
+        if(Q[j]>Q[i])
+            {
+            cout<<Q[j]<<" ";
+            flag=1;
+             break;
+            }
+        j=(j+1)%n;
+    }
+    if(flag==0)
+    cout<<"-1 ";
+    i++;
+}
+
+
+
+
+	return 0;
+}
