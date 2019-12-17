@@ -1,0 +1,60 @@
+#include<iostream>
+#include<stack>
+#include<algorithm>
+using namespace std;
+int histogram(long int*A, long int n)
+{
+    stack<int> s;
+    long int i=1;
+    s.push(0);
+    long int area=A[0];
+    while(i<n)
+    {
+       long int curr=A[i];
+         if(A[i]<A[s.top()])
+        {   
+            while(!s.empty() && A[i]<A[s.top()])
+            {   
+                curr=A[s.top()];
+                long int temp;
+                s.pop();
+                if(s.empty())
+                    temp=curr*i;
+                else
+                    temp=curr*(i-s.top()-1);
+                area=max(area,temp);
+            }
+            s.push(i);
+        }
+        else if(A[i]>=A[s.top()])
+        {
+            s.push(i);
+        }
+        i++;
+    }
+    if(i==n)
+    {
+        long int curr,temp;
+        while(!s.empty())
+        {
+            curr=A[s.top()];
+            s.pop();
+            if(s.empty())
+                temp=curr*i;
+            else
+                temp=curr*(i-s.top()-1);
+            area=max(area,temp);
+        }
+    }
+
+return area;
+}
+int main() {
+    long int n;
+    cin>>n;
+    long int A[n];
+    for(long int i=0;i<n;i++)
+        cin>>A[i];
+    cout<<histogram(A,n);
+	return 0;
+}
