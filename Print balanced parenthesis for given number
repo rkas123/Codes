@@ -1,0 +1,29 @@
+#include <iostream>
+using namespace std;
+void print(char *a,int open,int close,int count,int n)
+{
+    if(count==(2*n))
+    {
+        a[count]='\0';
+        cout<<a<<endl;
+        return;
+    }
+    if(open<n)
+    {
+        a[count]='(';
+        print(a,open+1,close,count+1,n);
+    }
+    if(close<open)
+    {
+        a[count]=')';
+        print(a,open,close+1,count+1,n);
+    }
+
+}
+int main() {
+    int n;
+    cin>>n;
+    char a[2*n];
+    print(a,0,0,0,n);
+    return 0;
+}
