@@ -1,0 +1,106 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<map>
+using namespace std;
+class node{
+    public:
+    int data;
+	int height;
+    node* left;
+    node* right;
+    node(int data,int height)
+    {
+        this->data=data;
+        this->left=NULL;
+        this->right=NULL;
+		this->height=height;
+    }
+};
+node* create()
+{
+   
+    queue<node*> q;
+    int data;
+    cin>>data;
+    node* root= new node(data,1);
+    q.push(root);
+    while(!q.empty())
+    {
+        node* f=q.front();
+        q.pop();
+        int d1,d2;
+        cin>>d1>>d2;
+        if(d1 != (-1))
+        {
+            f->left=new node(d1,f->height + 1);
+            q.push(f->left);
+        }
+        if(d2!=(-1))
+        {
+            f->right=new node(d2,f->height +1);
+            q.push(f->right);
+        }
+    }
+    return root;
+}
+void BFS(node* root)
+{
+    
+    queue<node*> q;
+    q.push(root);
+    q.push(NULL);
+    while(!q.empty())
+    {
+        if(q.front()==NULL)
+        {
+            q.pop();
+            cout<<endl;
+            if(!q.empty())
+                q.push(NULL);
+        }
+        else
+        {
+            node* f=q.front();
+            q.pop();
+            cout<<f->data<<", "<<f->height<<"    ";
+            if(f->left!=NULL)
+                q.push(f->left);
+            if(f->right!=NULL)
+                q.push(f->right);
+        }
+    }
+}
+void vop(node* root, map<int , vector<pair<int , int> > > &m,int d)
+{
+   
+    if(root==NULL)
+        return;
+    m[d].push_back(make_pair(root->data,root->height));
+    
+    vop(root->left,m,d-1);
+    vop(root->right,m,d+1);
+    	
+	
+}
+int main() {
+    node*  root=create();
+   
+   
+    map<int , vector<pair<int, int > > >m;
+    vop(root,m,0);
+    for(auto it=m.begin();it!=m.end();it++)
+    {
+        int n=it->second.size();
+		int l=it->second[0].second;
+		int index=0;
+        for(int j=1;j<n;j++)
+		{
+			if((it->second[j].second) >= l)
+				index=j;
+		}
+		cout<<it->second[index].first<<" ";
+    }
+
+	return 0;
+}
