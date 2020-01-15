@@ -1,0 +1,104 @@
+#include<iostream>
+#include<queue>
+#include<vector>
+#include<map>
+using namespace std;
+class node{
+	public:
+	int data;
+	int height;
+	int distance;
+	node* left;
+	node* right;
+	node(int data, int height, int distance)
+	{
+		this->data=data;
+		this->height=height;
+		this->distance=distance;
+		this->left=NULL;
+		this->right=NULL;
+	}
+};
+node* create()
+{
+	queue<node*>q;
+	int data;
+	cin>>data;
+	node* root=new node(data,1,0);
+	q.push(root);
+	while(!q.empty())
+	{
+		int left,right;
+		cin>>left>>right;
+		node* f=q.front();
+		q.pop();
+		if(left!=-1)
+		{
+			f->left=new node(left,f->height+1,f->distance-1);
+			q.push(f->left);
+		}
+		if(right!=-1)
+		{
+			f->right=new node(right,f->height+1,f->distance+1);
+			q.push(f->right);
+		}
+	}
+	return root;
+}
+void BFS(node* root)
+{
+	queue<node*> q;
+	q.push(root);
+	q.push(NULL);
+	while(!q.empty())
+	{
+		if(q.front()==NULL)
+		{
+			cout<<endl;
+			q.pop();
+			if(!q.empty())
+			q.push(NULL);
+		}
+		else
+		{
+			node* f=q.front();
+			cout<<f->data<<", "<<f->height<<", "<<f->distance<<"  ";
+			q.pop();
+			if(f->left!=NULL)
+			q.push(f->left);
+			if(f->right!=NULL)
+			q.push(f->right);
+		}
+	}
+}
+void vop(node* root, map<int , vector< pair<int , int> > > &m)
+{
+	if(root==NULL)
+		return;
+	m[root->height].push_back(make_pair( root->distance , root->data));
+	vop(root->left,m);
+	vop(root->right,m);
+
+}
+int main() {
+	node* root;
+	root=create();
+	map<int , vector< pair<int , int> > > m;
+	vop(root,m);
+	for(auto it=m.begin();it!=m.end();it++)
+	{
+		int l=it->second[0].first;
+		int index=0;
+		int n=it->second.size();
+		for(int j=1;j<n;j++)
+		{
+			if(it->second[j].first<l)
+			{
+				index=j;
+				l=it->second[j].first;
+			}
+		}
+		cout<<it->second[index].second<<" ";
+	}
+	return 0;
+}
