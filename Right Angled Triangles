@@ -1,1 +1,53 @@
+#include <iostream>
+#include <map>
+using namespace std;
+int main() {
+    int n;
+    cin>>n;
+    int X[n], Y[n];
+    for(int i=0;i<n;i++)
+    {
+        cin>>X[i]>>Y[i];
+    }
+    map<int , int> m;
+    map<int , int> m1;
+    for(int i=0;i<n;i++)
+    {
+        auto it=(m.find(X[i]));
+        if(it!=m.end())
+        {
+            (it->second)++;
+        }
+        else
+        {
+            m.insert(make_pair(X[i],1));
+        }
+        auto it1=(m1.find(Y[i]));
+        if(it1!=m1.end())
+        {
+            (it1->second)++;
+        }
+        else{
+            m1.insert(make_pair(Y[i],1));
+        }
+    }
+    cout<<"X map"<<endl;
+    for(auto it=m.begin();it!=m.end();it++)
+    {
+        cout<<it->first<<"->"<<it->second<<", ";
+    }
+    cout<<"\nY map"<<endl;
+    for(auto it=m1.begin();it!=m1.end();it++)
+    {
+        cout<<it->first<<"->"<<it->second<<", ";
+    }    
+    cout<<endl;
+    int count=0;
+    for(int i=0;i<n;i++)
+    {
+        count+=((m[X[i]]-1)*(m1[Y[i]]-1));
+    }
+    cout<<count;
+    return 0;
+}
 
