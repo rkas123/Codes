@@ -1,0 +1,37 @@
+#include<iostream>
+#include<algorithm>
+#include<set>
+#include<string>
+#include<cstring>
+using namespace std;
+void func(string ch,int l,int r,set<string>&s)
+{
+    if(l==r)
+    {
+        s.insert(ch);
+        return;
+    }
+    for(int i=l;i<=r;i++)
+    {
+        swap(ch[i],ch[l]);
+        func(ch,l+1,r,s);
+        swap(ch[i],ch[l]);
+    }
+}
+int main()
+{
+    string ch;
+    cout<<"Enter the string-> ";
+    cin>>ch;
+    sort(ch.begin(),ch.end());
+    set<string> s;
+    int l=ch.length();
+    func(ch,0,l-1,s);
+    cout<<"The permutations in lexicographic order are ->\n";
+    int i=1;
+    for(set<string>:: iterator it=s.begin();it!=s.end();it++)
+    {
+        cout<<(i++)<<". "<<*it<<endl;
+    }
+    return 0;
+}
