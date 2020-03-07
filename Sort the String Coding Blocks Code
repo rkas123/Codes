@@ -1,0 +1,78 @@
+#include<iostream>
+#include<string>
+#include<cstring>
+#include<algorithm>
+using namespace std;
+string token(string s,int key)
+{
+	char* ptr=strtok((char*)s.c_str()," ");
+	key--;
+	while(key--)
+	{
+		ptr=strtok(NULL," ");
+	}
+	return (string)ptr;
+}
+bool numeric(pair<string,string> s1, pair<string,string> s2)
+{
+	int key1=0,key2=0;
+	for(int i=0;i<s1.second.length();i++)
+	{
+		int rem=s1.second[i]-'0';
+		key1=(key1*10)+rem;
+	}
+	for(int i=0;i<s2.second.length();i++)
+	{
+		int rem=s2.second[i]-'0';
+		key2=key2*10 + rem;
+	}
+	//cout<<"comparing "<<key1<<" and "<<key2<<endl;
+	return key1 < key2;
+}
+bool lexio(pair<string,string> s1, pair<string,string> s2)
+{
+	return s1<s2;
+}
+int main() {
+	int n;
+	cin>>n;
+	cin.get();
+	string S[n];
+	for(int i=0;i<n;i++)
+	{
+		getline(cin,S[i]);
+	}
+	int key;
+	string reversed,type;
+	cin>>key;
+	cin.get();
+	cin>>reversed>>type;
+	pair<string,string> p[n];
+	for(int i=0;i<n;i++)
+	{
+		p[i]=make_pair(S[i],token(S[i],key));
+	}
+	if(type == "numeric")
+	{
+		sort(p,p+n,numeric);
+	}
+	else
+	{
+		sort(p,p+n,lexio);
+	}
+	if(reversed=="false")
+	{
+		for(int i=0;i<n;i++)
+		{
+			cout<<p[i].first<<endl;
+		}
+	}
+	else
+	{
+		for(int i=n-1;i>=0;i--)
+		{
+			cout<<p[i].first<<endl;
+		}
+	}
+	return 0;
+}
