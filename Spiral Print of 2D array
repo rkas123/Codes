@@ -22,17 +22,20 @@ int main()
         for(j=sc;j<=ec;j++)
             cout<<A[i][j]<<" ";
         sr++;
-        
+        if(sr>er || sc>ec)
+            break;
         j=ec;
         for(i=sr;i<=er;i++)
             cout<<A[i][j]<<" ";
         ec--;
-       
+        if(sr>er || sc>ec)
+            break;
         i=er;
         for(j=ec;j>=sc;j--)
             cout<<A[i][j]<<" ";
         er--;
-        
+        if(sr>er || sc>ec)
+            break;
         j=sc;
         for(i=er;i>=sr;i--)
             cout<<A[i][j]<<" ";
