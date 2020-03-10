@@ -1,0 +1,45 @@
+#include<iostream>
+using namespace std;
+int main()
+{
+    int r,c;
+    cout<<"Rows and Columns";
+    cin>>r>>c;
+    int A[r][c];
+    for(int i=0;i<r;i++)
+    {
+        for(int j=0;j<c;j++)
+            cin>>A[i][j];
+    }
+    int sr=0;
+    int er=r-1;
+    int sc=0;
+    int ec=c-1;
+    int i,j;
+    while(sr<=er)
+    {
+        i=sr;
+        for(j=sc;j<=ec;j++)
+            cout<<A[i][j]<<" ";
+        sr++;
+        if(sr>er || sc>ec)
+            break;
+        j=ec;
+        for(i=sr;i<=er;i++)
+            cout<<A[i][j]<<" ";
+        ec--;
+        if(sr>er || sc>ec)
+            break;
+        i=er;
+        for(j=ec;j>=sc;j--)
+            cout<<A[i][j]<<" ";
+        er--;
+        if(sr>er || sc>ec)
+            break;
+        j=sc;
+        for(i=er;i>=sr;i--)
+            cout<<A[i][j]<<" ";
+        sc++;
+    }
+    return 0;
+}
