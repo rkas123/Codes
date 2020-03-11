@@ -1,0 +1,53 @@
+#include <iostream>
+#include <deque>
+#include <map>
+#include <string>
+#include <cstring>
+#include <climits>
+#include <algorithm>
+using namespace std;
+void print(deque<char> d)
+{
+    for(deque<char>::iterator it=d.begin();it!=d.end();it++)
+        cout<<*it;
+}
+int main()
+{
+    string s;
+    cout<<"enter the string-> ";
+    cin>>s;
+    deque<char>d;
+    map<char,int> m;
+    int st=0;
+    int len=INT_MIN;
+      for(int i=0;i<s.length();i++)
+    {
+        if(m.find(s[i])==m.end())
+            {
+                m[s[i]]=i;
+                d.push_back(s[i]);
+            }
+        else if(m[s[i]] >=st && m[s[i]] <i)
+        {
+            print(d);
+            cout<<endl;
+            int temp=d.size();
+            len=max(len,temp);
+            while(d.front()!=s[i])
+                d.pop_front();
+            d.pop_front();
+            st=m[s[i]]+1;
+            m[s[i]]=i;
+            d.push_back(s[i]);
+        }
+        else
+        {
+            d.push_back(s[i]);
+            m[s[i]]=i;
+        }
+    }
+    print(d);
+    int temp=d.size();
+    cout<<"\n"<<max(temp,len);
+    return 0;
+}
