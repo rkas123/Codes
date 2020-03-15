@@ -1,0 +1,79 @@
+void print(map<pair<char,char>,int > m)
+{
+    for(auto it=m.begin();it!=m.end();it++)
+    {
+        auto p=it->first;
+        cout<<(p).first<<" "<<p.second<<" -> "<<it->second<<endl;
+    }
+}
+int distance(pair<char,char> p, int rq,int cq,int r,int c)//distance from queen
+{
+    if(p.first=='=' && p.second=='>')
+    {
+        return (c-cq);
+    }
+    else if(p.first=='=' && p.second=='<')
+        return (cq-c);
+    else if(p.second=='=' && p.first=='>')
+        return r-rq;
+    else if(p.second=='=' && p.first=='<')
+        return rq-r;
+    else if(p.first=='>')
+        return r-rq;
+    else 
+        return rq-r;
+}
+pair<char,char> check(int rq,int cq,int r,int c)//type of obstacle
+{
+    pair<char,char> p;
+    if(rq==r)
+        p.first='=';
+    else if(rq < r)
+        p.first='>';
+    else 
+        p.first='<';
+    if(cq==c)
+        p.second='=';
+    else if(cq<c)
+        p.second='>';
+    else 
+        p.second='<';
+    return p;
+}
+int queensAttack(int n, int k, int rq, int cq, vector<vector<int>> o) {
+map<pair<char,char>,int>m;
+m[make_pair('=','>')]=n+1-cq;
+m[make_pair('=','<')]=cq;
+m[make_pair('>','=')]=n+1-rq;
+m[make_pair('<','=')]=rq;
+m[make_pair('>','>')]=n+1-max(cq,rq);
+m[make_pair('<','>')]=min(n+1-cq,rq);
+m[make_pair('<','<')]=min(rq,cq);
+m[make_pair('>','<')]=min(n+1-rq,cq);
+pair<char,char> p;
+for(auto it=o.begin();it!=o.end();it++)
+{
+    auto i=it->begin();
+    int r=*i;
+    i++;
+    int c=*i;
+    if(rq==r || cq==c || (rq+cq)==(r+c) || (rq-cq)==(r-c))//if valid obstacle
+    {
+    pair<char,char> p=check(rq,cq,r,c);
+        int temp=m[p];
+        int dis=distance(p,rq,cq,r,c);
+        if(dis<temp)
+            m[p]=dis;
+    
+    }
+}
+//final iteration
+int answer=0;
+for(auto it=m.begin();it!=m.end();it++)
+{
+    answer+=it->second;
+}
+cout<<"Map is\n";
+print(m);
+return answer-8;
+}
