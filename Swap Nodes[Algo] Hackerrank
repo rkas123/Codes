@@ -1,0 +1,94 @@
+void print(map<int,int> m)
+{
+    for(auto it=m.begin();it!=m.end();it++)
+    {
+        cout<<it->first<<" -> "<<it->second<<endl;
+    }
+}
+void traversal(vector<vector<int>> indexes, int index,vector<int> &result)
+{
+    if(index==-1)
+        return;
+    auto it=indexes.begin();
+    it=it+index-1;
+    auto it1=it->begin();
+    int left=*it1;
+    it1++;
+    int right=*it1;
+    if(left!=-1)
+    {
+        traversal(indexes,left,result);
+        
+    }
+    result.push_back(index);
+    if(right!=-1)
+    {
+        traversal(indexes,right,result);
+    
+    }
+}
+vector<int> inorder(vector<vector<int>> indexes)
+{
+    vector<int> result;
+    auto it=indexes.begin()->begin();
+    int left=*it;
+    it++;
+    int right=*it;
+    traversal(indexes,left,result);
+    result.push_back(1);
+    traversal(indexes,right,result);
+    return result;
+}
+vector<vector<int>> swapNodes(vector<vector<int>> indexes, vector<int> queries) {
+    /*
+     * Write your code here.
+     */
+     map<int,int> m;
+     vector<vector<int>> result;
+     m[1]=1;
+     int index=1;
+     for(auto it=indexes.begin();it!=indexes.end();it++,index++)
+     {
+         for(auto temp=it->begin();temp!=it->end();temp++)
+         {
+             if(*temp != -1)
+                m[*temp]=m[index]+1;
+         }
+     }
+        print(m);
+    for(auto it=queries.begin();it!=queries.end();it++)
+    {
+        int level=*it;
+       
+        for(auto it1=indexes.begin();it1!=indexes.end();it1++)
+        {
+            auto curr=it1->begin();
+            bool check =false;
+            if(*curr!=-1)
+            {
+                if((m[*curr]-1)%level == 0)
+                    check=true;
+            }
+            else
+            {
+                curr++;
+                if(*curr!=-1)
+                    {
+                        if((m[*curr]-1)%level == 0)
+                            check=true;
+                    }
+            }
+            if(check)
+            {    
+                auto t1=it1->begin();
+                auto t2=t1+1;
+                int temp=*t1;
+                *t1=*t2;
+                *t2=temp;        
+            }
+        }
+      
+        result.push_back(inorder(indexes));
+    }
+return result;
+}
