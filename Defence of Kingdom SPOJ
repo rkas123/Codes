@@ -1,0 +1,42 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+long int max(long int a, long int b)
+{
+    if(a>b)
+        return a;
+    return b;
+}
+int main() {
+    long int t;
+    cin>>t;
+    while(t--)
+    {
+        long int x,y,too;
+        cin>>x>>y>>too;
+        long int to=too+2;
+        int a[to];
+        int b[to];
+        a[0]=0;
+        a[1]=x+1;
+        b[0]=0;
+        b[1]=y+1;
+        for(long int i=2;i<to;i++)
+        {
+            cin>>a[i]>>b[i];
+        }
+            sort(a,a+to);
+            sort(b,b+to);
+            long int m1=0,m2=0;
+        for(long int i=0;i<to-1;i++)
+            {
+                m1=max(m1,(a[i+1]-a[i]));
+                m2=max(m2,(b[i+1]-b[i]));
+            }
+        long int areaa=(m1-1)*(m2-1);
+            cout<<areaa<<endl;
+        
+    }
+    return 0;
+}
