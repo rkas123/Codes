@@ -1,0 +1,34 @@
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+bool compare(pair<int,int> a, pair<int,int> b)
+{
+    return a.second< b.second;
+}
+int main()
+{
+    int n;
+    cout<<"Number of activities-> ";
+    cin>>n;
+    vector<pair<int,int> >v;
+    while(n--)
+    {
+        int a,b;
+        cin>>a>>b;
+        v.push_back(make_pair(a,b));
+    }
+    sort(v.begin(),v.end(),compare);
+    int curr=0;
+    int count=0;
+    for(vector<pair<int,int> >::iterator it=v.begin();it!=v.end();it++)
+    {
+        if(it->first >= curr)
+        {
+            count++;
+            curr=it->second;
+        }
+    }
+    cout<<count;
+    return 0;
+}
