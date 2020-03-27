@@ -1,0 +1,75 @@
+#include<iostream>
+#include<unordered_map>
+#include<list>
+#include<algorithm>
+using namespace std;
+class graph{
+public:
+    unordered_map<int,list<pair<int,int> > >m;
+    unordered_map<int,int>distance;
+    void addedge(int u,int v,int distance)
+    {
+        m[u].push_back(make_pair(v,distance));
+        m[v].push_back(make_pair(u,distance));
+    }
+    int dfshelper(int src,unordered_map<int,int>&distance,unordered_map<int,bool> &visited)
+    {
+        distance[src]=1;
+        visited[src]=true;
+        for(list<pair<int,int> >::iterator it=m[src].begin();it!=m[src].end();it++)
+        {
+            if(!visited[(*it).first])
+            {
+                distance[src]+=dfshelper((*it).first,distance,visited);
+            }
+        }
+        return distance[src];
+
+    }
+    void dfs(int src)
+    {
+        unordered_map<int,bool>visited;
+        dfshelper(src,distance,visited);
+    }
+    void answer(int src,unordered_map<int,bool>&visited,int &ans,int n)
+    {
+        visited[src]=true;
+        for(list<pair<int,int> >::iterator it=m[src].begin();it!=m[src].end();it++)
+        {
+            if(!visited[(*it).first])
+            {
+                ans+=(2*(min(distance[(*it).first],n-distance[(*it).first]))*((*it).second));
+                answer((*it).first,visited,ans,n);
+            }
+        }
+
+    }
+
+};
+int main()
+{
+    int t;
+    cin>>t;
+    for(int i=1;i<=t;i++)
+    {
+        graph g;
+        int n;
+        cin>>n;
+        int x,y,z;
+        cin>>x>>y>>z;
+        int first=x;
+        g.addedge(x,y,z);
+        int m=n-2;
+        while(m--)
+        {
+            cin>>x>>y>>z;
+            g.addedge(x,y,z);
+        }
+        g.dfs(first);
+        unordered_map<int,bool> visited;
+        int ans=0;
+        g.answer(first,visited,ans,n);
+        cout<<"Case #"<<i<<": "<<ans<<endl;
+    }
+}
+
