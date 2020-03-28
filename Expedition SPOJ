@@ -1,0 +1,84 @@
+#include<iostream>
+#include<queue>
+#include<vector>
+#include<algorithm>
+using namespace std;
+bool compare(pair<int,int> a,pair<int,int> b)
+{
+   return a.first > b.first;
+}
+int main()
+{
+    int t;
+    cin>>t;
+    while(t--)
+    {
+        int n;
+        cin>>n;
+        vector<pair<int,int> >v;
+        int m=n;
+        while(m--)
+        {
+            int a,b;
+            cin>>a>>b;
+            v.push_back(make_pair(a,b));
+        }
+        sort(v.begin(),v.end(),compare);
+        priority_queue<int> p;
+        int d,f;
+        cin>>d>>f;
+        int x=0;
+        int answer=0;
+        bool flag=true;
+        while(x<n)
+        {
+           if(f >= (d-v[x].first))
+           {
+               f-=(d-v[x].first);
+               d-=(d-v[x].first);
+               p.push(v[x].second);
+           }
+            else
+            {
+                if(p.empty())
+                {
+                    cout<<"-1"<<endl;
+                    flag=false;
+                    break;
+                }
+                else
+                {
+                    answer++;
+                    f+=(p.top());
+                    p.pop();
+                    continue;
+                }
+               
+            }
+             x++;
+        }
+        
+        if(flag){
+           
+                while(1)
+                {
+                    if(f>=d)
+                    {
+                        cout<<answer<<endl;
+                        break;
+                    }
+                    if(p.empty())
+                    {
+                        cout<<"-1"<<endl;
+                        break;
+                    }
+                    f+=p.top();
+                    p.pop();
+                    answer++;
+                }
+            }
+        
+
+    }
+    return 0;
+}
