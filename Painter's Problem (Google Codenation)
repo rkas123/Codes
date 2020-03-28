@@ -1,0 +1,55 @@
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+bool possible(vector<long long int> v,long long int k,long long int boards)
+{
+	long long int curr=boards;
+	for(vector<long long int>::iterator it=v.begin();it!=v.end();it++)
+	{
+		if(*it<=curr)
+		{
+			curr-=(*it);
+		}
+		else
+		{
+			k--;
+			curr=boards-(*it);
+		}
+	}
+	if(k>0)
+		return true;
+	return false;
+}
+int main() {
+	long long int n,k,t;
+	cin>>n>>k>>t;
+	long long int m=-1,sum=0;
+	vector<long long int> v;
+	for(long long int i=0;i<n;i++)
+	{
+		long long int data;
+		cin>>data;
+		v.push_back(data);
+		sum+=data;
+		m=max(m,data);
+	}
+	long long int least=m;
+	long long int greatest=sum;
+	long long int answer;
+	while(least <= greatest)
+	{
+		long long int mid=(least+greatest)/2;
+		if(possible(v,k,mid))
+		{
+			answer=mid;
+			greatest=mid-1;
+		}
+		else
+		{
+			least=mid+1;
+		}
+	}
+	cout<<((answer%10000003)*(t%10000003))%10000003;
+	return 0;
+}
