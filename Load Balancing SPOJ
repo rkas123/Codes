@@ -1,0 +1,40 @@
+#include<iostream>
+#include<algorithm>
+using namespace std;
+int main()
+{
+    while(1)
+    {
+    int n;
+    cin>>n;
+    if(n==-1)
+        break;
+    int *A=new int[n];
+    int sum=0;
+    for(int i=0;i<n;i++){
+        cin>>A[i];
+        sum+=A[i];
+    }
+    cin.get();
+    if(sum%n!=0)
+        cout<<"-1"<<endl;
+    else
+    {
+        int temp=0;
+        int answer=0;
+        int avg=sum/n;
+        for(int i=1;i<n;i++)
+        {
+            A[i]+=A[i-1];
+        }
+        for(int i=1;i<=n-1;i++)
+        {
+            int left=A[i-1];
+            temp=abs(left-avg*i);
+            answer=max(answer,temp);
+        }
+        cout<<answer<<endl;
+    }
+    }
+    
+}
