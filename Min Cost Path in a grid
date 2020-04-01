@@ -1,0 +1,50 @@
+#include<bits/stdc++.h>
+using namespace std;
+int func(int** A,int** dp, int x, int y)
+{
+	if(dp[x][y]!=0)
+		return dp[x][y];
+	if(x==0 && y==0)
+	{
+		dp[x][y]=A[x][y];
+		return dp[x][y];
+	}
+	if(x==0)
+	{
+		dp[x][y]=func(A,dp,x,y-1)+ A[x][y];
+		return dp[x][y];
+	}
+	if(y==0)
+	{
+		dp[x][y]=func(A,dp,x-1,y)+ A[x][y];
+		return dp[x][y];
+	}
+	
+	dp[x][y]=min(func(A,dp,x-1,y),func(A,dp,x,y-1)) + A[x][y];
+	return dp[x][y];
+}
+int main()
+{
+	/*/#ifndef ONLINE_JUDGE
+		freopen("input.txt","r",stdin);
+		freopen("output.txt","w",stdout);
+	#endif/*/
+		int r,c;
+		cin>>r>>c;
+		int** A=new int*[r];
+		for(int i=0;i<r;i++)
+			A[i]=new int[c];
+		for(int i=0;i<r;i++)
+			for(int j=0;j<c;j++)
+				cin>>A[i][j];
+		int x,y;
+		cin>>x>>y;
+		int** dp=new int*[r];
+		for(int i=0;i<r;i++)
+			dp[i]=new int[c];
+		for(int i=0;i<r;i++)
+			for(int j=0;j<c;j++)
+				dp[i][j]=0;
+		cout<<func(A,dp,x,y)<<endl;
+	return 0;
+}
