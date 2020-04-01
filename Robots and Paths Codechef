@@ -1,0 +1,55 @@
+#include<bits/stdc++.h> 
+#define MOD 1000000007
+using namespace std;
+
+int main()
+{
+	/*/#ifndef ONLINE_JUDGE
+		freopen("input.txt","r",stdin);
+		freopen("output.txt","w",stdout);
+	#endif/*/
+		int r,c,b;
+		cin>>r>>c>>b;
+		int **dp=new int*[r];
+		for(int i=0;i<r;i++)
+			dp[i]=new int[c];
+		for(int i=0;i<r;i++)
+			for(int j=0;j<c;j++)
+				dp[i][j]=0;
+		int x,y;
+		while(b--)
+		{
+			cin>>x>>y;
+			dp[x-1][y-1]=-1;
+		}
+		for(int i=0;i<c;i++)
+		{
+			if(dp[0][i]==-1)
+				break;
+			dp[0][i]=1;
+		}
+		for(int i=0;i<r;i++)
+		{
+			if(dp[i][0]==-1)
+				break;
+			dp[i][0]=1;
+		}
+		for(int i=1;i<r;i++)
+		{
+			for(int j=1;j<c;j++)
+			{
+				if(dp[i][j]==-1)
+					continue;
+				if(dp[i-1][j]!=-1)
+					dp[i][j]=dp[i-1][j]%MOD;
+				if(dp[i][j-1]!=-1)
+					dp[i][j]=(dp[i][j]+dp[i][j-1])%MOD;
+			}
+		}
+		if(dp[r-1][c-1]==-1)
+		    cout<<"0";
+		else
+		cout<<dp[r-1][c-1];
+
+	return 0;
+}
