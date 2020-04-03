@@ -1,0 +1,59 @@
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+bool compare(pair<long int,long int> a,pair<long int,long int> b)
+{
+	if(a.first != b.first)
+		return a.first < b.first;
+	return a.second > b.second;
+}
+int main()
+{
+	long int n, cost;
+	cin>>n>>cost;
+	vector<pair<long int,long int> >v;
+	long int data;
+	for(long int i=0;i<n;i++)
+		{
+			cin>>data;
+			v.push_back(make_pair(data,0));
+		}
+	for(long int i=0;i<n;i++)
+	{
+		cin>>data;
+		v[i].second=data;
+	}
+	sort(v.begin(),v.end(),compare);
+	
+	long int **dp=new long int*[n+1];
+	for(long int i=0;i<=n;i++)
+		dp[i]=new long int[cost+1];
+	for(long int i=0;i<=n;i++)
+	{
+		for(long int j=0;j<=cost;j++)
+			dp[i][j]=0;
+	}
+	for(long int i=1;i<=n;i++)
+	{
+		for(long int j=1;j<=cost;j++)
+		{
+			if(j < v[i-1].first)
+			{
+				dp[i][j]=dp[i-1][j];
+			}
+			else{
+			long int op1=v[i-1].second + dp[i-1][j-(v[i-1].first)];
+			long int op2=dp[i-1][j];
+			
+			if(op1 > op2)
+				dp[i][j]=op1;
+			else
+				dp[i][j]=op2;
+			}
+		}
+	}		
+	
+	cout<<dp[n][cost];
+	return 0;
+}
