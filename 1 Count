@@ -1,0 +1,51 @@
+#include<iostream>
+#include<algorithm>
+using namespace std;
+int main() {
+	int n,k;
+	cin>>n>>k;
+	int* A=new int[n];
+	for(int i=0;i<n;i++)
+		cin>>A[i];
+	int l=0,r=0;
+	int L,R;
+	int zero_count=0,answer=0,length=0;
+	while(r<n)
+	{
+		if(A[r]==0)
+		{
+			zero_count++;
+		}
+		if(zero_count > k)
+		{
+			while(zero_count > k)
+			{
+				if(A[l]==0)
+				{
+					zero_count--;
+				}
+				l++;
+			}
+		}
+		else
+		{
+		length=r-l+1;
+		if(length > answer)
+			{
+				L=l;
+				R=r;
+				answer=length;
+			}
+		}
+		r++;
+	}
+	cout<<answer<<endl;
+	for(int i=0;i<n;i++)
+	{
+		if(i>=L && i<=R)
+			cout<<"1 ";
+		else
+			cout<<A[i]<<" ";
+	}
+	return 0;
+}
