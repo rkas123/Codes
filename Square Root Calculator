@@ -1,0 +1,51 @@
+#include<bits/stdc++.h>
+using namespace std;
+int main()
+{
+	/*/#ifndef ONLINE_JUDGE
+		freopen("input.txt","r",stdin);
+		freopen("output.txt","w",stdout);
+	#endif/*/
+	int n;
+	cin>>n;
+	float answer=0;
+	int s=1;
+	int e=n;
+	while(s<=e)
+	{
+		int mid=(s+e)/2;
+		if(mid*mid==n)
+		{
+			answer=mid;
+			break;
+		}
+		if(mid*mid < n)
+		{
+			answer=mid;
+			s=mid+1;
+		}
+		else
+		{
+			e=mid-1;
+		}
+	}
+	int precision;
+	cin>>precision;
+	float multiplier=0.1;
+	while(precision--)
+	{
+		int i=0;
+		while(i<=9){
+			if((answer+(i*multiplier))*(answer+(i*multiplier))<=n)
+				i++;
+			else{
+				i--;
+				break;
+			}
+		}
+		answer+=(i*multiplier);
+		multiplier/=10;
+	}	
+	cout<<answer<<endl;
+	return 0;
+}
