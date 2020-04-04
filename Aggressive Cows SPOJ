@@ -1,0 +1,55 @@
+#include<bits/stdc++.h>
+using namespace std;
+bool check(long int*A,int mid, int n,int c)
+{
+	int curr=A[0];
+	c--;
+	for(int i=1;i<n;i++)
+	{
+		if((A[i]- curr) >= mid)
+		{
+			c--;
+			curr=A[i];
+		}
+		if(c==0)
+			return true;
+	}
+	return false;
+}
+int main()
+{
+	/*/#ifndef ONLINE_JUDGE
+		freopen("input.txt","r",stdin);
+		freopen("output.txt","w",stdout);
+	#endif/*/
+	int t;
+	cin>>t;
+	while(t--){
+	int n,c;
+	cin>>n>>c;
+	long int* A=new long int[n];
+	for(int i=0;i<n;i++)
+		cin>>A[i];
+	sort(A,A+n);
+	int m=A[n-1]-A[0];
+	int s=0;
+	int e=m;
+	int answer=0;
+	while(s<=e)
+	{
+		int mid=(s+e)/2;
+		if(check(A,mid,n,c))
+		{
+			answer=mid;
+			s=mid+1;
+		}
+		else
+		{
+			e=mid-1;
+		}
+
+}	
+cout<<answer<<endl;
+}
+return 0;
+}
