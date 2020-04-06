@@ -1,0 +1,65 @@
+#include<iostream>
+#include<climits>
+#include<algorithm>
+using namespace std;
+bool check(long int*A, long int pratas, long int curr,long int cooks)
+{
+
+	for(long int i=0;i<cooks;i++)
+	{
+		long int upper=(2*curr)/A[i];
+		long int k;
+		for(k=1;k<=pratas;k++)
+		{
+			if(k*(k+1) > upper)
+			{
+				break;
+			}
+		}
+		pratas-=(k-1);
+		//cout<<pratas<<" ";
+		if(pratas<=0)
+			return true;
+	}
+	if(pratas<=0)
+		return true;
+	return false;
+}
+int main()
+{
+	long t;
+	cin>>t;
+	while(t--)
+	{
+		long int pratas;
+		cin>>pratas;
+		long int cooks;
+		cin>>cooks;
+		long int*A=new long int[cooks];
+		for(long int i=0;i<cooks;i++)
+			cin>>A[i];
+		sort(A,A+cooks);
+		// for(long int i=0;i<cooks;i++)
+		// 	cout<<A[i]<<" ";
+		//cout<<endl;
+		long int s=1;
+		long int e=(A[0]*pratas*(pratas+1))/2LL;
+		long int answer;
+		while(s<=e)
+		{
+			long int mid=(s+e)/2;
+			//cout<<mid<<endl;
+			if(check(A,pratas,mid,cooks))
+			{
+				answer=mid;
+				//cout<<"true for "<<mid<<endl;
+				e=mid-1;
+			}
+			else
+			{
+				s=mid+1;
+			}
+		}
+		cout<<answer<<endl;
+	}	
+}
