@@ -1,0 +1,61 @@
+#include<iostream>
+using namespace std;
+int check(int*A, int s, int e)
+{
+	//cout<<s<<" "<<e<<endl;
+	if(s>=e)
+		return 0;
+	int mid=(s+e)/2;
+	int l=check(A,s,mid);
+	int r=check(A,mid+1,e);
+	int size=(e-s+1);
+	int temp[size];
+	int i=s;
+	int j=mid+1;
+	int count=0;
+	int k=0;
+	while(i<=mid && j<=e)
+	{
+		if(A[i]>A[j]){
+			count+=(mid-i+1);
+			temp[k++]=A[j++];
+		}
+		else if(A[i]==A[j])
+		{
+			count+=(mid-i);
+			temp[k++]=A[i];
+			temp[k++]=A[j];
+			i++;
+			j++;
+		}
+		else
+		{
+			temp[k++]=A[i++];
+		}
+	}
+	while(i<=mid)
+	{
+		temp[k++]=A[i++];
+	}
+	while(j<=e)
+		temp[k++]=A[j++];
+	for(i=s,k=0;i<=e;i++,k++)
+	{
+		A[i]=temp[k];
+	}
+	//cout<<"from "<<s<<" to "<<e<<" -> "<<(count+l+r)<<endl;
+	return (count+l+r);
+}
+int main()
+{
+	int n;
+	cin>>n; 
+	int *A=new int[n];
+	for(int i=0;i<n;i++)
+		cin>>A[i];
+	cout<<check(A,0,n-1)<<endl;
+	// for(int i=0;i<n;i++)
+	// 	cout<<A[i]<<" ";
+	return 0;
+	
+}
