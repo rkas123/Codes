@@ -1,0 +1,118 @@
+int minimumMoves(vector<string> grid, int startX, int startY, int goalX, int goalY) {
+    int n=grid[0].length();
+    char A[n][n];
+    for(int i=0;i<n;i++)
+    {
+        for(int j=0;j<n;j++)
+            A[i][j]=grid[i][j];
+    }
+    // for(int i=0;i<n;i++)
+    // {
+    //     for(int j=0;j<n;j++)
+    //         cout<<A[i][j]<<" ";
+    //     cout<<endl;
+    // }
+    int dp[n][n];
+    for(int i=0;i<n;i++)
+        for(int j=0;j<n;j++)
+            dp[i][j]=0;
+    queue<pair<int,int> > q;
+    q.push(make_pair(startX,startY));
+    while(!q.empty())
+    {
+        pair<int,int> p=q.front();
+        q.pop();
+        int x=p.first;
+        int y=p.second;
+       // cout<<x<<" "<<y<<endl;
+        int i,j;
+        if(x > 0)
+        {
+            //cout<<"in 1. ";    
+            for(i=x-1;i>=0;i--)
+            {
+                if(A[i][y]=='X')
+                    break;
+                if(dp[i][y]==0)
+                {
+                    dp[i][y]=dp[x][y]+1;
+                    q.push(make_pair(i,y));
+                }
+            }
+            
+            // if(dp[i+1][y]==0 && i+1!=x)
+            // {
+            //     q.push(make_pair(i+1,y));
+            //     dp[i+1][y]=dp[x][y]+1;
+            // }
+        }
+        if(x < n-1)
+        {
+            //cout<<"in 2. ";    
+            for(i=x+1;i<n;i++)
+            {
+                if(A[i][y]=='X')
+                    break;
+                if(dp[i][y]==0)
+                {
+                    dp[i][y]=dp[x][y]+1;
+                    q.push(make_pair(i,y));
+                }
+            }
+           
+            // if(dp[i-1][y]==0 && i-1 !=x)
+            // {
+            //     //cout<<"pushed "<<endl;
+            //     q.push(make_pair(i-1,y));
+            //     dp[i-1][y]=dp[x][y]+1;
+            // }
+        }
+        if(y > 0)
+        {
+            //cout<<"in 3. ";    
+            for(i=y-1;i>=0;i--)
+            {
+                if(A[x][i]=='X')
+                    break;
+                if(dp[x][i]==0)
+                {
+                    dp[x][i]=dp[x][y]+1;
+                    q.push(make_pair(x,i));
+                }
+            }
+            
+            // if(dp[x][i+1]==0 && i+1!=y)
+            // {
+            //     q.push(make_pair(x,i+1));
+            //     dp[x][i+1]=dp[x][y]+1;
+            // }
+        }
+        if(y < n-1)
+        {
+            //cout<<"in 4. ";    
+            for(i=y+1;i<n;i++)
+            {
+                if(A[x][i]=='X')
+                    break;
+                if(dp[x][i]==0)
+                {
+                    q.push(make_pair(x,i));
+                    dp[x][i]=dp[x][y]+1;
+                }
+            }
+            
+            // if(dp[x][i-1]==0 && i-1!=y)
+            // {
+            //     q.push(make_pair(x,i-1));
+            //     dp[x][i-1]=dp[x][y]+1;
+            // }
+        }
+    }
+    // for(int i=0;i<n;i++)
+    // {
+    //     for(int j=0;j<n;j++)
+    //         cout<<dp[i][j]<<" ";
+    //     cout<<endl;
+    // }
+    return dp[goalX][goalY];
+}
