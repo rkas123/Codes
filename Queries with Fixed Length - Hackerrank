@@ -1,0 +1,53 @@
+#include<iostream>
+#include<list>
+#include<algorithm>
+#include<climits>
+using namespace std;
+int main()
+{
+    int n,q;
+    cin>>n>>q;
+    int A[n];
+    for(int i=0;i<n;i++)
+        cin>>A[i];
+    while(q--)
+    {
+        int data;
+        cin>>data;
+        int answer=INT_MAX;
+        if(data==1)
+        {
+            for(int i=0;i<n;i++)
+                answer=min(answer,A[i]);
+        }
+        else {
+            list<int> l;
+            for(int i=0;i<data;i++)
+            {
+                if(l.empty())
+                    l.push_back(i);
+                else {
+                while(A[i]>=A[l.back()] && (!l.empty())){
+                    l.pop_back();
+                }
+                l.push_back(i);
+                }
+            }
+            //cout<<A[l.front()]<<endl;
+            //cout<<"1."<<endl;
+            answer=min(answer,A[l.front()]);
+            for(int i=data;i<n;i++)
+            {
+                while(l.front() <= (i-data) && (!l.empty()))
+                    l.pop_front();
+                while(A[l.back()] <= A[i] && (!l.empty()))
+                    l.pop_back();
+                l.push_back(i);
+                //cout<<A[l.front()]<<endl;
+                answer=min(answer,A[l.front()]);
+            }
+        }
+        cout<<answer<<endl;
+    }
+    return 0;
+}
