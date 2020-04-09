@@ -1,0 +1,21 @@
+int *dp=new int[1000001];
+void func()
+{   
+    for(int i=2;i<=1000000;i++)
+        dp[i]=-1;
+    dp[0]=0;
+    dp[1]=1;
+    for(int i=2;i<=1000000;i++)
+    {
+        if(dp[i]==-1 || (dp[i]> dp[i-1]+1))
+            dp[i]=dp[i-1]+1;
+        for(int j=2;j<=i && (j*i)<=1000000;j++)
+        {
+            if(dp[i*j]==-1 || (dp[i*j] > dp[i]+1))
+                dp[i*j]=dp[i]+1;
+        }
+    }
+}
+int downToZero(int n) {
+    return dp[n];
+}
