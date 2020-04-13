@@ -1,0 +1,47 @@
+#include<iostream>
+#include<queue>
+#include<vector>
+#include<algorithm>
+#include<iomanip>
+using namespace std;
+int main()
+{
+    int n;
+    cin>>n;
+    priority_queue<int> Max;
+    priority_queue<int, vector<int>, greater<int> > Min;
+    float median=0;
+    int data;
+    while(n--)
+    {
+        cin>>data;
+        if(data > median)
+            Min.push(data);
+        else
+            Max.push(data);
+        if(Max.size() == Min.size())
+        {
+            median=(Min.top() + Max.top())/2.0;
+        }
+        else if(Max.size() - Min.size() == 1)
+        {
+            median=Max.top();
+        }
+        else if(Min.size() - Max.size() == 1)
+            median=Min.top();
+        else if(Min.size() - Max.size() == 2)
+        {
+            Max.push(Min.top());
+            Min.pop();
+            median=(Min.top() + Max.top())/2.0;
+        }
+        else
+        {
+            Min.push(Max.top());
+            Max.pop();
+            median=(Min.top() + Max.top())/2.0;
+        }
+    cout<<fixed<<setprecision(1)<<median<<endl;
+    }
+    return 0;
+}
