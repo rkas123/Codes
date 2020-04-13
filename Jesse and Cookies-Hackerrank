@@ -1,0 +1,44 @@
+#include<iostream>
+#include<queue>
+#include<algorithm>
+#include<vector>
+using namespace std;
+int main()
+{
+    int n,k;
+    cin>>n>>k;
+    priority_queue<int, vector<int>, greater<int> > pq;
+    int data;
+    while(n--)
+    {
+        cin>>data;
+        pq.push(data);
+    }
+    int count=0;
+    bool flag=true;
+    while((pq.top() < k))
+    {
+        if(pq.empty())
+        {
+            flag=false;
+            break;
+        }
+        int a=pq.top();
+        pq.pop();
+        if(pq.empty())
+        {
+            flag=false;
+            break;
+        }
+        int b=pq.top();
+        pq.pop();
+        int c= a + (2*b);
+        pq.push(c);
+        count++;
+    }
+    if(!flag)
+    cout<<"-1"<<endl;
+    else
+    cout<<count<<endl;
+return 0;
+}
