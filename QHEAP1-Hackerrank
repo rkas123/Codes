@@ -1,0 +1,91 @@
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+void upheapify(vector<long int>&heap, int idx)
+{
+    if(idx==0)
+        return;
+    int parentidx=(idx-1)/2;
+    if(heap[parentidx] > heap[idx])
+    {
+        swap(heap[parentidx],heap[idx]);
+        upheapify(heap,parentidx);
+    }
+    else
+    {
+        return;
+    }
+}
+void downheapify(vector<long int> &heap, int idx)
+{
+    int left=2*idx +1;
+    int right=2*idx +2;
+    if(left>= heap.size() && right>=heap.size())
+    {
+        return;
+    }
+    int smallestidx=idx;
+    if(left < heap.size() && heap[left] < heap[smallestidx])
+    {
+        smallestidx=left;
+    }
+    if(right < heap.size() && heap[right] < heap[smallestidx])
+    {
+        smallestidx=right;
+    }
+    if(idx == smallestidx)
+        return;
+    else
+    {
+        swap(heap[idx],heap[smallestidx]);
+        downheapify(heap,smallestidx);
+    }
+}
+void del(vector<long int> &heap, int data)
+{
+    int index;
+    for(int i=0;i<heap.size();i++)
+    {
+        if(heap[i]==data)
+        {
+            index=i;
+            break;
+        }
+    }
+    swap(heap[index],heap[heap.size()-1]);
+    heap.pop_back();
+    downheapify(heap,index);
+}
+void insert(vector<long int> &heap, int data)
+{
+    heap.push_back(data);
+    upheapify(heap,heap.size()-1);
+}
+int main()
+{
+    int n;
+    cin>>n;
+    vector<long int> heap;
+    while(n--)
+    {
+        int t;
+        cin>>t;
+        if(t==1)
+        {
+            long int data;
+            cin>>data;
+            insert(heap,data);
+        }
+        if(t==2)
+        {
+            long int data;
+            cin>>data;
+            del(heap,data);
+        }
+        if(t==3)
+        {
+            cout<<heap[0]<<endl;
+        }
+    }
+}
