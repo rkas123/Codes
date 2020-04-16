@@ -1,0 +1,105 @@
+#include<iostream>
+#include<stack>
+#include<algorithm>
+#include<string>
+#include<vector>
+using namespace std;
+int precedence(char op)
+{
+    if(op=='^')
+        return 3;
+    if(op=='/')
+        return 2;
+    if(op=='*')
+        return 2;
+    if(op=='+')
+        return 1;
+    if(op=='-')
+        return 1;
+    return 0;
+}
+//associativity 1-> Right to Left    2-> Left to Right
+int associativity(char op)
+{
+    if(op=='^')
+        return 1;
+    if(op=='/')
+        return 2;
+    if(op=='*')
+        return 2;
+    if(op=='+')
+        return 2;
+    if(op=='-')
+        return 2;
+    return 0;
+}
+int main()
+{
+    string exp;
+    getline(cin,exp);
+    stack<char> op;
+    vector <char> post;
+    int j=0;
+    int len=exp.length();
+    for(int i=0;i<len;i++)
+    {
+        //cout<<i<<" ";
+        if(isalpha(exp[i])){
+            cout<<"Pushing "<<exp[i]<<" in postfix expression"<<endl;
+            post.push_back(exp[i]);
+        }
+        else
+        {
+            if(op.empty()){
+                cout<<"Pushing "<<exp[i]<<" in stack"<<endl;
+                op.push(exp[i]);
+            }
+            else
+            {
+                if(exp[i]=='('){
+                    op.push('(');
+                    continue;
+                }
+                if(exp[i]==')')
+                {
+                    while(op.top()!='('){
+                        post.push_back(op.top());
+                        op.pop();
+                    }
+                    op.pop();
+                    continue;
+                }
+                while (!op.empty() &&(precedence(op.top()) > precedence(exp[i])) )
+                {
+                    cout<<"Pushing and popping "<<op.top()<<endl;
+                    post.push_back(op.top());
+                    op.pop();
+                }
+                if(!op.empty() && (precedence(op.top()) == precedence(exp[i])) )
+                {
+                    int as=associativity(op.top());
+                    if(as==2)
+                    {
+                        cout<<"Pushing and popping "<<op.top()<<endl;
+                        post.push_back(op.top());
+                        op.pop();
+                    }
+                }
+                cout<<"Pushing "<<exp[i]<<endl;
+                op.push(exp[i]);
+            }
+        }
+    }
+    while(!op.empty())
+    {
+        cout<<"Pushing and popping "<<op.top();
+        post.push_back(op.top());
+        op.pop();
+    }
+    cout<<"The POSTFIX expression of the given expression is\n";
+    for(int i=0;i<post.size();i++)
+    {
+        cout<<post[i];
+    }
+    return 0;
+}
