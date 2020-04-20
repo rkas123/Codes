@@ -1,0 +1,13 @@
+ll fastexp(ll a,ll b)
+{
+	ll answer=1;
+	ll temp=a;
+	while(b>0)
+	{
+		if(b&1)
+			answer*=(temp);
+		temp*=temp;
+		b>>=1;
+	}
+	return answer;
+}
