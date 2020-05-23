@@ -1,0 +1,44 @@
+#include<bits/stdc++.h>
+#define int long long
+#define in(x) int x;cin>>x;
+#define w(t) int t; cin>> t; while(t--)
+#define Map unordered_map
+#define inf 1e18;
+#define f(i,s,e) for(int i=s;i<e;i++)
+using namespace std;
+int32_t main()
+{
+    #ifndef ONLINE_JUDGE 
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    #endif
+    w(t)
+    {
+        in(n);
+        int*A=new int[n];
+        int x=0;
+        f(i,0,n)
+        {
+            cin>>A[i];
+            x^=A[i];
+        }
+        int temp;
+        int mask=1;
+        while((mask&x)==0)
+        {
+            mask<<=1;
+        }
+        temp=mask;
+        int a=0;
+        f(i,0,n)
+        {
+            if((temp&A[i]))
+            {
+                a^=A[i];
+            }
+        }
+        int b=(x^a);
+        cout<<a<<" "<<b;
+    }
+    return 0;
+}
