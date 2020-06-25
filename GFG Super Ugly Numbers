@@ -1,0 +1,74 @@
+#include<bits/stdc++.h>
+#define int long long
+#define in(x) int x;cin>>x;
+#define w(t) int t; cin>> t; while(t--)
+#define Map unordered_map
+#define inf 1e18;
+#define f(i,s,e) for(int i=s;i<e;i++)
+#define MOD 1000000007
+const double pi = 3.14159265358979323846;
+using namespace std;
+int fastexp(int a,int b)
+{
+    int answer=1;
+    int temp=a;
+    while(b>0)
+    {
+        if(b&1)
+            answer*=(temp);
+        temp*=temp;
+        b>>=1;
+    }
+    return answer;
+
+}
+int32_t main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    #ifndef ONLINE_JUDGE 
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    #endif
+
+    in(n);
+    int* primes=new int[n];
+    for(int i=0;i<n;i++)
+        cin>>primes[i];
+
+    in(k);
+    if(k==1){
+        cout<<1<<endl;
+        return 0;
+    }
+
+    Map<int,bool> visited;
+
+    priority_queue<int,vector<int>, greater<int> > pq;
+    pq.push(1);
+    //visited[]
+    int* dp=new int[k+1];
+    for(int i=1;i<=k;i++)
+    {
+        int small=pq.top();
+        while(visited[small])
+        {
+            pq.pop();
+            small=pq.top();
+        }
+        dp[i]=small;
+        visited[small]=true;
+        for(int j=0;j<n;j++){
+            pq.push(small*primes[j]);
+            //cout<<small*primes[j]<<" ";
+        }
+    
+    }
+
+    for(int i=1;i<=k;i++)
+        cout<<dp[i]<<" ";
+    cout<<endl;
+
+
+    return 0;
+}
