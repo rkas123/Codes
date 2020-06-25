@@ -1,0 +1,56 @@
+#include<bits/stdc++.h>
+#define int long long
+#define in(x) int x;cin>>x;
+#define w(t) int t; cin>> t; while(t--)
+#define Map unordered_map
+#define inf 1e18;
+#define f(i,s,e) for(int i=s;i<e;i++)
+#define MOD 1000000007
+const double pi = 3.14159265358979323846;
+using namespace std;
+int fastexp(int a,int b)
+{
+    int answer=1;
+    int temp=a;
+    while(b>0)
+    {
+        if(b&1)
+            answer*=(temp);
+        temp*=temp;
+        b>>=1;
+    }
+    return answer;
+
+}
+int32_t main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    #ifndef ONLINE_JUDGE 
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    #endif
+    in(n);
+    in(k);
+
+    int**dp=new int*[k+1];
+    for(int i=0;i<=k;i++)
+        dp[i]=new int[n+1];
+    for(int i=0;i<=k;i++)
+        for(int j=0;j<=n;j++)
+            dp[i][j]=0;
+    
+    dp[1][1]=1;
+
+    for(int i=1;i<=k;i++){
+        dp[i][i]=1;
+        for(int j=i+1;j<=n;j++)
+        {
+            dp[i][j]=(i*dp[i][j-1] + dp[i-1][j-1]);
+        }
+    }
+    
+    cout<<dp[k][n]<<endl;
+    return 0;
+
+}
