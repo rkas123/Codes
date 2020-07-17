@@ -1,0 +1,143 @@
+#include<bits/stdc++.h>
+#define int long long
+#define uint unsigned long long
+#define in(x) int x;cin>>x;
+#define w(t) int t; cin>> t; while(t--)
+#define Map unordered_map
+#define inf 1e18
+#define endl "\n"
+#define MOD 1000000007
+const double pi = 3.14159265358979323846;
+using namespace std;
+int fastexp(int a,int b)
+{
+    int ans=1;
+    int temp=a;
+    while(b>0)
+    {
+        if(b&1)
+            ans*=(temp);
+        temp*=temp;
+        b>>=1;
+    }
+    return ans;
+
+}
+int GCD(int a,int b)
+{
+    if(a==0)
+        return b;
+    return GCD(b%a,a);
+}
+void update(pair<int,int>* tree,int index, int s, int e, int i, int val)
+{
+    if(s>e)
+        return;
+    if(i>e || i<s)
+        return;
+    if(s==e){
+        tree[index]=make_pair(val,1);
+        return;
+    }
+    int mid=(s+e)/2;
+    update(tree,2*index+1,s,mid,i,val);
+    update(tree,2*index+2,mid+1,e,i,val);
+    pair<int,int> l=tree[2*index+1];
+    pair<int,int> r=tree[2*index+2];
+    if(l.first == r.first){
+        if(l.first == inf)
+        {
+            tree[index]=make_pair(inf,0);
+        }
+        else
+        {
+            tree[index]=make_pair(l.first, (l.second+r.second));
+        }
+    }
+    else if(l.first < r.first)
+        tree[index]=l;
+    else
+        tree[index]=r;
+}
+pair<int,int> Query(pair<int,int>*tree, int index, int s, int e,int qs, int qe)
+{
+    pair<int,int> answer=make_pair(inf,0);
+    if(s>e){
+        //cout<<s<<" "<<e<<" 0"<<endl;
+        return answer;
+    }
+    if(s>qe || e<qs){
+        //cout<<s<<" "<<e<<" 1"<<endl;
+        return answer;
+    }
+    if(s>=qs && e<=qe){
+        //cout<<s<<" "<<e<<" 2"<<endl;
+        return tree[index];
+    }
+    int mid=(s+e)/2;
+    pair<int,int> l=Query(tree,2*index+1,s,mid,qs,qe);
+    pair<int,int> r=Query(tree,2*index+2,mid+1,e,qs,qe);
+    if(l.first == 1e18 && r.first ==1e18){
+        //cout<<s<<" "<<e<<" beech"<<endl;
+        return answer;
+    }
+    if(l.first == r.first)
+    {
+        answer.first=l.first;
+        answer.second=l.second+r.second;
+        //cout<<s<<" "<<e<<" 3"<<endl;
+        return answer;
+    }
+    else if(l.first < r.first){
+        //cout<<s<<" "<<e<<" 4"<<endl;
+        return l;
+    }
+    else {
+        //cout<<s<<" "<<e<<" 5"<<endl;
+        return r;
+    }
+
+}
+int32_t main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    #ifndef ONLINE_JUDGE 
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    #endif
+    in(n);in(m);
+    int size=1;
+    while(size<n)
+        size*=2;
+    int arrsize=size;
+    size*=2;
+    pair<int,int> *tree=new pair<int,int>[size];
+    for(int i=0;i<size;i++){
+        pair<int,int> p=make_pair(inf,0);
+        tree[i]=p;
+    }
+    for(int i=0;i<n;i++)
+    {
+        in(x);
+        update(tree,0,0,arrsize-1,i,x);
+    }
+    while(m--)
+    {
+        in(c);
+        if(c==1)
+        {
+            in(i);in(val);
+            update(tree,0,0,arrsize-1,i,val);
+        }
+        else
+        {
+            in(s);in(e);
+            pair<int,int> p=Query(tree,0,0,arrsize-1,s,e-1);
+            cout<<p.first<<" "<<p.second<<endl;
+        }
+    }
+    
+
+    return 0;
+}
