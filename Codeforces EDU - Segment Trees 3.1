@@ -1,0 +1,89 @@
+#include<bits/stdc++.h>
+#define int long long
+#define uint unsigned long long
+#define in(x) int x;cin>>x;
+#define w(t) int t; cin>> t; while(t--)
+#define Map unordered_map
+#define inf 1e18
+#define endl "\n"
+#define MOD 1000000007
+#define L 2*index+1
+#define R 2*index+2
+const double pi = 3.14159265358979323846;
+using namespace std;
+int fastexp(int a,int b)
+{
+    int ans=1;
+    int temp=a;
+    while(b>0)
+    {
+        if(b&1)
+            ans*=(temp);
+        temp*=temp;
+        b>>=1;
+    }
+    return ans;
+
+}
+int GCD(int a,int b)
+{
+    if(a==0)
+        return b;
+    return GCD(b%a,a);
+}
+void update(int* tree, int index, int s, int e, int i)
+{
+    if(s>e)
+        return;
+    if(i>e || i<s)
+        return;
+    if(s==e){
+        tree[index]=1;
+        return;
+    }
+    int mid=(s+e)/2;
+    update(tree,L,s,mid,i);
+    update(tree,R,mid+1,e,i);
+    tree[index]=tree[L]+tree[R];
+}
+int Query(int* tree, int index, int s, int e, int ls, int rs)
+{
+    if(s>e)
+        return 0;
+    if(s>rs || e<ls)
+        return 0;
+    if(s>=ls && e<=rs)
+        return tree[index];
+    int mid=(s+e)/2;
+    int l=Query(tree,L,s,mid,ls,rs);
+    int r=Query(tree,R,mid+1,e,ls,rs);
+    return (l+r);
+}
+int32_t main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    #ifndef ONLINE_JUDGE 
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    #endif
+    in(n);
+    int size=1;
+    while(size<n)
+    {
+        size*=2;
+    }
+    int arrsize=size;
+    size*=2;
+    int* tree=new int[size];
+    for(int i=0;i<size;i++)
+        tree[i]=0;
+    for(int i=0;i<n;i++)
+    {
+        in(data);
+        update(tree,0,1,arrsize,data);
+        cout<<Query(tree,0,1,arrsize,data+1,n)<<" ";
+    }
+
+    return 0;
+}
