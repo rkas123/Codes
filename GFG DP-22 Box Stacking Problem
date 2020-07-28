@@ -1,0 +1,54 @@
+class box{
+    public:
+    int width;
+    int height;
+    int length;
+};
+bool compare(box a, box b)
+{
+  int a1=a.length * a.width;
+  int a2=b.length * b.width;
+  return a1>a2;
+}
+int maxHeight(int height[],int width[],int length[],int n)
+{
+    //Your code here
+    box* b=new box[3*n];
+    int j=0;
+    for(int i=0;i<n;i++)
+    {
+        int A=height[i];
+        int B=width[i];
+        int C=length[i];
+        b[j].length=A;b[j].width=B;b[j].height=C;
+        j++;
+        b[j].length=A;b[j].width=C;b[j].height=B;
+        j++;
+        b[j].length=B;b[j].width=C;b[j].height=A;
+        j++;
+    }
+    sort(b,b+(3*n),compare);
+    int*dp=new int[3*n];
+    for(int i=0;i<3*n;i++)
+        dp[i]=0;
+    int answer=0;
+    for(int i=0;i<3*n;i++)
+    {
+        dp[i]=b[i].height;
+        int extra=0;
+        for(int j=0;j<i;j++)
+        {
+            int mj=max(b[j].length,b[j].width);
+            int minj=min(b[j].length,b[j].width);
+            int mi=max(b[i].length,b[i].width);
+            int mini=min(b[i].length,b[i].width);
+            if(mj > mi && minj > mini)
+            {
+                extra=max(extra,dp[j]);
+            }
+        }
+        dp[i]+=extra;
+        answer=max(answer,dp[i]);
+    }
+    return answer;
+}
