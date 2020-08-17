@@ -1,0 +1,53 @@
+#include<bits/stdc++.h>
+#define int long long
+#define uint unsigned long long
+#define in(x) int x;cin>>x
+#define w(t) int t; cin>> t; while(t--)
+#define Map unordered_map
+#define inf 1e18
+#define endl "\n"
+#define MOD 1000000007
+#define L 2*I+1
+#define R 2*I+2
+const double pi = 3.14159265358979323846;
+using namespace std;
+
+int32_t main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    #ifndef ONLINE_JUDGE 
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    #endif
+    w(t)
+    {
+        string s;
+        cin>>s;
+        int len=s.length();
+        stack<char> st;
+        bool flag=false;
+        for(int i=0;i<len;i++)
+        {
+            if(s[i]=='(' || s[i]=='+' || s[i]=='*' || s[i]=='-' || s[i]=='/')
+                st.push(s[i]);
+            else if(s[i]==')')
+            {
+                if(st.top() == '(')
+                {
+                    flag=true;
+                    break;
+                }
+                while(st.top()!='(')
+                    st.pop();
+                st.pop();
+            }
+        }
+        if(flag)
+            cout<<"Yes"<<endl;
+        else 
+            cout<<"No"<<endl;
+    }
+
+    return 0;
+}
