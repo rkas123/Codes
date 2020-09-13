@@ -1,0 +1,62 @@
+stack<int> s;
+void dfs(int src,vector<int> m[], bool *visited)
+{
+    visited[src]=true;
+    for(auto it : m[src])
+    {
+        if(!visited[it]){
+            dfs(it,m,visited);
+        }
+    }
+    s.push(src);
+}
+
+void dfs1(int src,vector<int> m[], bool* visited)
+{
+    visited[src]=true;
+    for(auto it : m[src])
+    {
+        if(!visited[it]){
+            dfs(it,m,visited);
+        }
+    }
+    //s.push(src);
+}
+int kosaraju(int V, vector<int> adj[])
+{
+    // Your code here
+    vector<int> m[V];
+    vector<int> rev[V];
+    for(int i=0;i<V;i++)
+    {
+        for(int j=0;j<adj[i].size();j++){
+            m[i].push_back(adj[i][j]);
+            rev[adj[i][j]].push_back(i);
+        }
+    }
+    bool visited[V],vis[V];
+    for(int i=0;i<V;i++)
+    {
+        visited[i]=false;
+        vis[i]=false;
+    }
+    for(int i=0;i<V;i++)
+    {
+        if(!visited[i])
+        {
+            dfs(i,m,visited);
+        }
+    }
+    int answer=0;
+    while(!s.empty())
+    {
+        int node=s.top();
+        s.pop();
+        if(!vis[node])
+        {
+            dfs1(node,rev,vis);
+            answer++;
+        }
+    }
+    return answer;
+}
