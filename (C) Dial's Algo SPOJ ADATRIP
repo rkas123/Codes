@@ -1,0 +1,78 @@
+
+
+//https://github.com/rkas123/TEMPLATE/blob/master/Template.cpp
+//Template taken from here
+
+using namespace std;
+
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    #ifndef ONLINE_JUDGE
+       freopen("input.txt", "r", stdin);
+       freopen("output.txt", "w", stdout);
+    #endif
+    inl(n);inl(m);inl(q);
+    vpll adj[n];
+    ll mw=0;
+    for(int i=0;i<m;i++)
+    {
+        inl(u);inl(v);inl(w);
+        adj[u].pb({v,w});
+        adj[v].pb({u,w});
+        mw=max(mw,w);
+    }
+    while(q--)
+    {
+        inl(src);
+        list<ll> dist[10*n];
+        vector<pair<ll,list<ll>::iterator>> dis(n);
+        for(int i=0;i<n;i++)
+            dis[i].F=inf;
+        dis[src].F=0;
+        dist[0].push_front(src);
+        ll curr=0;
+        ll h=0;
+        ll count=0;
+        while(curr<mw*n)
+        {
+            while(curr<mw*n && dist[curr].size() == 0)
+                curr++;
+            if(curr==mw*n)
+                break;
+            ll node=dist[curr].front();
+            dist[curr].pop_front();
+            for(auto it: adj[node])
+            {
+                if(dis[it.F].F > dis[node].F + it.S)
+                {
+                    if(dis[it.F].F!=inf)
+                    {
+                        dist[dis[it.F].F].erase(dis[it.F].S);
+                    }
+                    dis[it.F].F=dis[node].F+it.S;
+                    dist[dis[it.F].F].push_front(it.F);
+                    dis[it.F].second=dist[dis[it.F].F].begin();
+                }
+            }
+        }   
+        for(int i=0;i<n;i++)
+        {
+            if(dis[i].F == inf)
+                continue;
+            if(dis[i].F == h)
+            {
+                count++;
+            }
+            else if(dis[i].F > h)
+            {
+                h=dis[i].F;
+                count=1;
+            }
+        }
+        cout<<h<<" "<<count<<endl;
+    }
+    
+    return 0;   
+}
