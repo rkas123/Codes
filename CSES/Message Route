@@ -1,0 +1,76 @@
+//https://github.com/rkas123/TEMPLATE/blob/master/Template.cpp
+//Template taken from here
+ 
+using namespace std;
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    #ifndef ONLINE_JUDGE
+      freopen("input.txt", "r", stdin);
+      freopen("output.txt", "w", stdout);
+    #endif
+    in(n);in(m);
+    vector<int> adjlist[n+1];
+    for(int i=0;i<m;i++)
+    {
+        in(u);in(v);
+        adjlist[v].pb(u);
+        adjlist[u].pb(v);
+    }
+    bool vis[n+1];
+    int parent[n+1];
+    for(int i=1;i<=n;i++)
+    {
+        vis[i]=false;
+        parent[i]=i;
+    }
+    queue<int> q;
+    q.push(1);
+    bool flag=false;
+    while(!q.empty())
+    {
+        int node=q.front();
+        q.pop();
+        if(vis[node])
+            continue;
+        vis[node]=true;
+        if(node==n)
+        {
+            flag=true;
+            break;
+        }
+        for(auto it: adjlist[node])
+        {
+            if(!vis[it])
+            {
+                if(parent[it]==it)
+                    parent[it]=node;
+                q.push(it);
+            }
+        }
+    }
+    if(!flag)
+    {
+        cout<<"IMPOSSIBLE"<<endl;
+    }
+    else
+    {
+        int steps=0;
+        vector<int> v;
+        int curr=n;
+        while(curr!=1)
+        {
+            v.pb(curr);
+            curr=parent[curr];
+            steps++;
+        }
+        steps++;
+        v.pb(1);
+        cout<<steps<<endl;
+        for(int i=steps-1;i>=0;i--)
+            cout<<v[i]<<" ";
+        cout<<endl;
+    }
+    return 0;   
+}
