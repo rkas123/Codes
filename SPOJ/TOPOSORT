@@ -1,0 +1,83 @@
+//https://github.com/rkas123/TEMPLATE/blob/master/Template.cpp
+//Template taken from here
+
+using namespace std;
+int n,m;
+vector<int> adjlist[10001];
+bool instack[10001];
+bool vis[10001];
+list<int> ans;
+bool cmp(int a,int b)
+{
+    return a>b;
+}
+bool iscycle(int src, map<int,bool> &visited)
+{
+    visited[src]=true;
+    instack[src]=true;
+    for(auto it: adjlist[src])
+    {
+        if((!visited[it] && iscycle(it,visited) ) || instack[it])
+        {
+            return true;
+        }
+    }
+    instack[src]=false;
+    return false;
+}
+void topsort(int src)
+{
+    vis[src]=true;
+    for(auto it: adjlist[src])
+    {
+        if(!vis[it])
+            topsort(it);
+    }
+    ans.push_front(src);
+}
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    #ifndef ONLINE_JUDGE
+      freopen("input.txt", "r", stdin);
+      freopen("output.txt", "w", stdout);
+    #endif
+    cin>>n>>m;
+    for(int i=0;i<m;i++)
+    {
+        in(u);in(v);
+        adjlist[u].pb(v);
+    }
+    for(int i=0;i<=n;i++)
+    {
+        sort(adjlist[i].begin(),adjlist[i].end(),cmp);
+        vis[i]=false;
+        instack[i]=false;
+    }
+    map<int,bool> visited;
+    bool flag=false;
+    for(int i=1;i<=n;i++)
+    {
+        if(!visited[i] && iscycle(i,visited))
+        { 
+            flag=true;
+            break;
+        }
+    }
+    if(flag)
+    {
+        cout<<"Sandro fails.";
+        return 0;
+    }
+    for(int i=n;i>=1;i--)
+    {
+        if(!vis[i])
+            topsort(i);
+    }
+    for(auto it: ans)
+        cout<<it<<" ";
+    cout<<endl;
+    
+    return 0;   
+}
