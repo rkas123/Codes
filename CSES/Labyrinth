@@ -1,0 +1,156 @@
+#include<bits/stdc++.h>
+ 
+#define ll long long
+#define ld long double
+ 
+#define pii pair<int,int>
+#define vi vector<int> 
+#define vvi vector<vi> 
+#define vpii vector<pii> 
+ 
+#define pll pair<ll,ll> 
+#define vl vector<ll> 
+#define vvl vector<vl> 
+#define vpll vector<pll> 
+ 
+#define inl(x) ll x;cin>>x
+#define in(x) int x;cin>>x
+#define mk(t,a,n) t*a = new t[n]
+#define inp(a,n) for(int i = 0;i<n;i++)cin>>a[i]
+#define sea(a,n,v) for(int i = 0;i<n;i++)a[i] = v
+#define pb push_back
+#define F first
+#define S second
+#define LEFT 2*I+1
+#define RIGHT 2*I+2
+#define endl "\n"
+#define mii map<int,int>
+#define mll map<ll,ll>
+#define ub upper_bound
+#define lb lower_bound
+#define um unordered_map
+#define lop(i,n) for(ll i=0;i<n;i++)
+#define lop1(i,n) for(ll i=1;i<=n;i++)
+#define lopr(i,n) for(ll i=n-1;i>=0;i--)
+#define test() int t;cin>>t;while(t--)
+#define KStest() int t,t1;cin>>t;t1=t;while(t--)
+#define KScout cout<<"Case #"<<t1-t<<": "
+ 
+const int mod = 1e9+7,MAX = 1e6+5;
+const ll inf = 1e18+5;
+const double pi = 3.14159265358979323846;
+ 
+//https://github.com/rkas123/TEMPLATE/blob/master/Template.cpp
+//Template taken from here
+int row[]={-1,0,0,1};
+int col[]={0,1,-1,0};
+bool vis[1000][1000];
+char A[1000][1000];
+int r,c;
+bool ok(int x,int y)
+{
+    if(x<0 || y<0 || x>=r || y>=c || vis[x][y] || A[x][y]=='#')
+        return false;
+    return true;
+ 
+}
+using namespace std;
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    #ifndef ONLINE_JUDGE
+      freopen("input.txt", "r", stdin);
+      freopen("output.txt", "w", stdout);
+    #endif
+    cin>>r>>c;
+    int ans[r][c];
+    int ax,ay,bx,by;
+    for(int i=0;i<r;i++)
+    {
+        for(int j=0;j<c;j++)
+        {
+            cin>>A[i][j];
+            vis[i][j]=false;
+            ans[i][j]=MAX;
+            if(A[i][j]=='A')
+            {
+                ax=i;ay=j;
+            }
+            if(A[i][j]=='B')
+            {
+                bx=i;by=j;
+            }
+        }
+    }
+    queue<pii> q;
+    q.push({ax,ay});
+    ans[ax][ay]=0;
+    bool flag=false;
+    while(!q.empty())
+    {
+        pii node=q.front();
+        q.pop();
+        if(node.F == bx && node.S == by)
+        {
+            flag=true;
+            break;
+        }
+        int i=node.F;
+        int j=node.S;
+        //cout<<i<<" "<<j<<"->";
+        vis[i][j]=true;
+        int dist=ans[i][j];
+        for(int k=0;k<4;k++)
+        {
+            int x=i+row[k];int y=j+col[k];
+            if(ok(x,y))
+            {
+                //cout<<x<<","<<y<<" ";
+                q.push({x,y});
+                vis[x][y]=true;
+                ans[x][y]=dist+1;
+            }
+        }        
+        //cout<<endl;
+    }
+    if(!flag)
+    {
+        cout<<"NO"<<endl;
+    }
+    else
+    {
+        string s;
+        int x=bx,y=by;
+        while(x!=ax || y!=ay)
+        {
+            int dist=ans[x][y];
+            //cout<<x<<" "<<y<<endl;
+            if(y>0 && ans[x][y-1]==dist-1)
+            {
+                s+='R';
+                y--;
+            }
+            else if(y<c-1 && ans[x][y+1]==dist-1)
+            {
+                s+='L';
+                y++;
+            }
+            else if(x>0 && ans[x-1][y]==dist-1)
+            {
+                s+='D';
+                x--;
+            }
+            else
+            {
+                s+='U';
+                x++;
+            }
+        }
+        reverse(s.begin(),s.end());
+        cout<<"YES"<<endl<<s.length()<<endl;
+        cout<<s<<endl;
+    }
+    
+    return 0;   
+}
