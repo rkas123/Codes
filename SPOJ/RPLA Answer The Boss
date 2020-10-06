@@ -10,68 +10,53 @@ int main()
       freopen("input.txt", "r", stdin);
       freopen("output.txt", "w", stdout);
     #endif
-    KStest()
+    in(n);in(m);
+    list<int> ans;
+    int indegree[n+1];
+    vector<int> adjlist[n+1];
+    for(int i=0;i<=n;i++)
     {
-        in(n);in(m);
-        bool vis[n];
-        vector<int> adjlist[n];
-        int indegree[n];
-        for(int i=0;i<n;i++)
+        indegree[i]=0;
+    }
+    for(int i=0;i<m;i++)
+    {
+        in(u);in(v);    
+        adjlist[u].pb(v);
+        indegree[v]++;
+    }
+    priority_queue<int,vector<int>,greater<int>> pq;
+    for(int i=1;i<=n;i++)
+    {
+        if(indegree[i]==0)
+            pq.push(i);
+    }
+    int count=0;
+    while(!pq.empty())
+    {
+        int node=pq.top();
+        pq.pop();
+        //cout<<node<<" ";
+        ans.push_back(node);
+        count++;
+        for(auto it: adjlist[node])
         {
-            vis[i]=false;
-            indegree[i]=0;
-        }
-        for(int i=0;i<m;i++)
-        {
-            in(u);in(v);
-            adjlist[v].pb(u);
-            indegree[u]++;
-        }
-        queue<int> q;
-        for(int i=0;i<n;i++)
-        {
-            if(indegree[i]==0)
+            indegree[it]--;
+            if(indegree[it]==0)
             {
-                q.push(i);
-            }
-        }
-        q.push(-1);
-        int rank=1;
-        map<int,set<int>> ma;
-        while(!q.empty())
-        {
-            int node=q.front();
-            q.pop();
-            if(node==-1)
-            {
-                if(!q.empty())
-                {
-                    q.push(-1);
-                }
-                rank++;
-            }
-            else
-            {
-                vis[node]=true;
-                ma[rank].insert(node);
-                for(auto it: adjlist[node])
-                {
-                    indegree[it]--;
-                    if(indegree[it]==0)
-                        q.push(it);
-                }
-            }
-        }
-        KScout;
-        cout<<endl;
-        for(auto it: ma)
-        {
-            for(auto i:it.S)
-            {
-                cout<<it.F<<" "<<i<<endl;
+                pq.push(it);
             }
         }
     }
-    
+    //cout<<endl;
+    if(count!=n)
+    {
+        cout<<"Sandro fails."<<endl;
+    }
+    else
+    {
+        for(auto it: ans)
+            cout<<it<<" ";
+        cout<<endl;
+    }
     return 0;   
 }
