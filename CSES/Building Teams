@@ -1,0 +1,66 @@
+
+//https://github.com/rkas123/TEMPLATE/blob/master/Template.cpp
+//Template taken from here
+
+using namespace std;
+int n;
+vector<int> adjlist[100001];
+int color[100001];
+bool dfs(int src,int col)
+{
+    //cout<<src<<" ";
+    color[src]=col;
+    for(auto it: adjlist[src])
+    {
+        if(color[it]==col){
+            return false;
+        }
+        if(color[it]==-1)
+        {
+            if(!dfs(it,(col+1)%2))
+                return false;
+        }
+    }
+    return true;
+}
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    #ifndef ONLINE_JUDGE
+      freopen("input.txt", "r", stdin);
+      freopen("output.txt", "w", stdout);
+    #endif
+    cin>>n;in(m);
+    
+    for(int i=0;i<=n;i++)
+        color[i]=-1;
+    for(int i=0;i<m;i++)
+    {
+        in(u);in(v);
+        adjlist[u].pb(v);
+        adjlist[v].pb(u);
+    }
+    bool flag=true;
+    for(int i=1;i<=n;i++)
+    {
+        if(color[i]==-1)
+        {
+            if(!dfs(i,0))
+            {
+                flag=false;
+                break;
+            }
+        }
+    }
+    if(!flag)
+    {
+        cout<<"IMPOSSIBLE"<<endl;
+        return 0;
+    }
+    //cout<<endl;
+    for(int i=1;i<=n;i++)
+        cout<<color[i]+1<<" ";
+    cout<<endl;
+    return 0;   
+}
