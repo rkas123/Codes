@@ -1,0 +1,41 @@
+//https://github.com/rkas123/TEMPLATE/blob/master/Template.cpp
+//Template taken from here
+
+using namespace std;
+double func(double a)
+{
+    return a*a + sqrt(a);
+}
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    #ifndef ONLINE_JUDGE
+      freopen("input.txt", "r", stdin);
+      freopen("output.txt", "w", stdout);
+    #endif
+    double n;
+    cin>>n;
+    double s=0;
+    double e=n;
+    int count=0;
+    double answer=-1;
+    while(count < 100)
+    {
+        double mid=(s+e)/2;
+        double curr=func(mid);
+        if(curr > n)
+        {
+            e=mid;
+        }
+        else
+        {
+            s=mid;
+            answer=mid;
+        }
+        count++;
+    }
+    cout<<fixed<<setprecision(10)<<answer<<endl;
+
+    return 0;
+}
