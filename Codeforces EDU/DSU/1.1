@@ -1,0 +1,58 @@
+//https://github.com/rkas123/TEMPLATE/blob/master/Template.cpp
+//Template taken from here
+
+using namespace std;
+int n;
+int parent[100005];
+int Rank[100005];
+int get(int a)
+{
+    return parent[a]=(parent[a]==a)?a:get(parent[a]);
+}
+void Union(int a,int b)
+{
+    int parent_a=get(a);
+    int parent_b=get(b);
+    if (Rank[parent_a] == Rank[parent_b])
+        Rank[parent_a]++;
+    if (Rank[parent_a] > Rank[parent_b])
+    {
+        parent[parent_b]=parent_a;
+    }
+    else
+    {
+        parent[parent_a]=parent_b;
+    }
+}
+
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    #ifndef ONLINE_JUDGE
+      freopen("input.txt", "r", stdin);
+      freopen("output.txt", "w", stdout);
+    #endif
+    cin>>n;
+    for(int i=1;i<=n;i++)
+    {
+        parent[i]=i;
+        Rank[i]=0;
+    }
+    test()
+    {
+        string s;
+        cin>>s;
+        in(a);in(b);
+        if(s=="union")
+            Union(a,b);
+        else
+        {
+            if(get(a) == get(b))
+                cout<<"YES"<<endl;
+            else
+                cout<<"NO"<<endl;
+        }
+    }
+    return 0;
+}
