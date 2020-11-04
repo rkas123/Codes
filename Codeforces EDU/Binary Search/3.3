@@ -1,0 +1,64 @@
+//https://github.com/rkas123/TEMPLATE/blob/master/Template.cpp
+//Template taken from here
+
+using namespace std;
+int n,k;
+int A[100005];
+bool pos(int mid)
+{
+    int i=0;
+    int count=1;
+    int curr=A[0];
+    while(i<n)
+    {
+        while(i<n && A[i]-curr < mid)
+        {
+            i++;
+        }
+        if(i!=n)
+        {
+            count++;
+            curr=A[i];
+        }
+    }
+    if(count>=k)
+        return true;
+    return false;
+}
+int main()
+{
+    // ios_base::sync_with_stdio(false);
+    // cin.tie(NULL);
+    // #ifndef ONLINE_JUDGE
+    //   freopen("input.txt", "r", stdin);
+    //   freopen("output.txt", "w", stdout);
+    // #endif
+    cin>>n>>k;
+    int s=MAX;
+    for(int i=0;i<n;i++)
+    {
+        cin>>A[i];
+    }
+    for(int i=1;i<n;i++)
+    {
+        s=min(A[i]-A[i-1],s);
+    }
+    int e=A[n-1];
+    int answer;
+    while(s<=e)
+    {
+        int mid=(s+e)/2;
+        //cout<<s<<" "<<e<<" "<<mid<<" "<<answer<<endl;
+        if(pos(mid))
+        {
+            answer=mid;
+            s=mid+1;
+        }
+        else
+        {
+            e=mid-1;
+        }
+    }
+    cout<<answer<<endl;
+    return 0;
+}
