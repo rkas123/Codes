@@ -1,0 +1,73 @@
+//https://github.com/rkas123/TEMPLATE/blob/master/Template.cpp
+//Template taken from here
+
+using namespace std;
+int n;
+int parent[300005];
+int Rank[300005];
+int size[300005];
+int least[300005];
+int greatest[300005];
+int get(int a)
+{
+    return parent[a]=(parent[a]==a)?a:get(parent[a]);
+}
+void Union(int a,int b)
+{
+    int parent_a=get(a);
+    int parent_b=get(b);
+    if(parent_a == parent_b)
+        return;
+    if (Rank[parent_a] == Rank[parent_b])
+        Rank[parent_a]++;
+    if (Rank[parent_a] > Rank[parent_b])
+    {
+        parent[parent_b]=parent_a;
+        size[parent_a]+=size[parent_b];
+        least[parent_a]=min(least[parent_a],least[parent_b]);
+        greatest[parent_a]=max(greatest[parent_a],greatest[parent_b]);
+    }
+    else
+    {
+        parent[parent_a]=parent_b;
+        size[parent_b]+=size[parent_a];
+        least[parent_b]=min(least[parent_a],least[parent_b]);
+        greatest[parent_b]=max(greatest[parent_a],greatest[parent_b]);
+    }
+}
+
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    #ifndef ONLINE_JUDGE
+      freopen("input.txt", "r", stdin);
+      freopen("output.txt", "w", stdout);
+    #endif
+    cin>>n;
+    for(int i=1;i<=n;i++)
+    {
+        parent[i]=i;
+        Rank[i]=0;
+        size[i]=1;
+        least[i]=i;
+        greatest[i]=i;
+    }
+    test()
+    {
+        string s;
+        cin>>s;
+        
+        if(s=="union"){
+            in(a);in(b);
+            Union(a,b);
+        }
+        else
+        {
+            in(a);
+            int parent=get(a);
+            cout<<least[parent]<<" "<<greatest[parent]<<" "<<size[parent]<<endl;
+        }
+    }
+    return 0;
+}
