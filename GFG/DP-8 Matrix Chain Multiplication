@@ -1,0 +1,36 @@
+//https://github.com/rkas123/TEMPLATE/blob/master/Template.cpp
+//Template taken from here
+
+using namespace std;
+int main()
+{
+    // ios_base::sync_with_stdio(false);
+    // cin.tie(NULL);
+    // #ifndef ONLINE_JUDGE
+    //   freopen("input.txt", "r", stdin);
+    //   freopen("output.txt", "w", stdout);
+    // #endif
+    in(n);
+    int A[n+1];
+    for(int i=0;i<=n;i++)
+        cin>>A[i];
+    int dp[n][n];
+    for(int i=0;i<n;i++)
+    {
+        for(int j=0;j<n;j++)
+            dp[i][j]=MAX;
+        dp[i][i]=0;
+    }
+    for(int i=1;i<n;i++)
+    {
+        for(int j=i-1;j>=0;j--)
+        {
+            for(int k=j;k<i;k++)
+            {
+                dp[j][i]= min(dp[j][i],dp[j][k]+dp[k+1][i]+ A[j]*A[k+1]*A[i+1]);
+            }
+        }
+    }
+    cout<<dp[0][n-1]<<endl;
+    return 0;
+}
