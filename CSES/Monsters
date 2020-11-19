@@ -30,23 +30,6 @@ void dfs(int x,int y)
     }
 }
 
-void dfsm(int x,int y)
-{
-    for(int i=0;i<4;i++)
-    {
-        int X=x+arrx[i];
-        int Y=y+arry[i];
-        if(x < 0 || x>=n || y<0 || y>=m)
-            continue;
-        if((A[X][Y]=='.' || A[X][Y]=='A')&& dism[X][Y] > dism[x][y]+1)
-        {
-            if(dism[x][y]+1 < dism[X][Y]){
-                dism[X][Y]=dism[x][y]+1;
-                dfsm(X,Y);
-            }
-        }
-    }
-}
 
 int main()
 {
