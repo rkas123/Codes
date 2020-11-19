@@ -1,0 +1,118 @@
+//https://github.com/rkas123/TEMPLATE/blob/master/Template.cpp
+//Template taken from here
+ 
+using namespace std;
+void bfs()
+{
+ 
+}
+int main()
+{
+    // ios_base::sync_with_stdio(false);
+    // cin.tie(NULL);
+    // #ifndef ONLINE_JUDGE
+    //   freopen("input.txt", "r", stdin);
+    //   freopen("output.txt", "w", stdout);
+    // #endif
+    in(n);in(m);
+    vector<int> adjList[n+1];
+    for(int i=0;i<m;i++)
+    {
+        in(a);in(b);
+        adjList[a].pb(b);
+        adjList[b].pb(a);
+    }
+    
+    int parent[n+1];
+    bool visited[n+1];
+    for(int i=1;i<=n;i++)
+    {
+        parent[i]=i;
+        visited[i]=false;
+    }
+    bool flag=false;
+    int node1,node2;
+for(int i=1;i<=n;i++)
+{
+        if(visited[i])
+            continue;
+ 
+        queue<int> q;
+        q.push(i);
+    while(!q.empty())
+        {
+            int node=q.front();
+            q.pop();
+        for(auto it: adjList[node])
+        {
+            if(parent[node]==it)
+                continue;
+            if(visited[it])
+            {
+                node1=node;
+                node2=it;
+                flag=true;
+                break;
+            }
+            else
+            {
+                visited[it]=true;
+                parent[it]=node;
+                q.push(it);
+            }
+        }
+    }
+    if(flag)
+    {
+        break;
+    }
+ 
+}
+    
+    if(!flag)
+    {
+        cout<<"IMPOSSIBLE"<<endl;
+    }
+    else
+    {
+        bool vis[n+1];
+        for(int i=1;i<=n;i++)
+        {
+            vis[i]=false;
+        }
+        int start=node1;
+        list<int> answer;
+        vector<int> temp;
+        answer.pb(start);
+        vis[start]=true;
+        while(parent[start] != start)
+        {
+            temp.pb(parent[start]);
+            vis[parent[start]]=true;
+            start=parent[start];
+        }
+        answer.pb(node2);
+        start=node2;
+        while(!vis[parent[start]])
+        {
+            answer.pb(parent[start]);
+            start=parent[start];
+        }
+        for(int i=0;i<temp.size();i++)
+        {
+            if(temp[i]==parent[start])
+            {
+                answer.push_front(temp[i]);
+                break;
+            }
+            answer.push_front(temp[i]);
+        }
+        answer.pb(parent[start]);
+        cout<<answer.size()<<endl;
+        for(auto it: answer)
+            cout<<it<<" ";
+        cout<<endl;
+ 
+    }
+    return 0;
+}
