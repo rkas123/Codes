@@ -1,0 +1,189 @@
+//https://github.com/rkas123/TEMPLATE/blob/master/Template.cpp
+//Template taken from here
+
+using namespace std;
+int n,m;
+char A[1000][1000];
+int dis[1000][1000];
+int dism[1000][1000];
+bool pos[1000][1000];
+int sx,sy;
+vector<pii> monsters;
+int arrx[]={1,-1,0,0};
+int arry[]={0,0,1,-1};
+string ans= "UDLR";
+
+void dfs(int x,int y)
+{
+    //cout<<x<<" "<<y<<endl;
+    for(int i=0;i<4;i++)
+    {
+        int X=x+arrx[i];
+        int Y=y+arry[i];
+        if(x < 0 || x>=n || y<0 || y>=m)
+            continue;
+        if(A[X][Y]=='.' && dis[X][Y] > dis[x][y]+1)
+        {
+            dis[X][Y]=dis[x][y]+1;
+            dfs(X,Y);
+        }
+    }
+}
+
+void dfsm(int x,int y)
+{
+    for(int i=0;i<4;i++)
+    {
+        int X=x+arrx[i];
+        int Y=y+arry[i];
+        if(x < 0 || x>=n || y<0 || y>=m)
+            continue;
+        if((A[X][Y]=='.' || A[X][Y]=='A')&& dism[X][Y] > dism[x][y]+1)
+        {
+            if(dism[x][y]+1 < dism[X][Y]){
+                dism[X][Y]=dism[x][y]+1;
+                dfsm(X,Y);
+            }
+        }
+    }
+}
+
+int main()
+{
+    // ios_base::sync_with_stdio(false);
+    // cin.tie(NULL);
+    // #ifndef ONLINE_JUDGE
+    //   freopen("input.txt", "r", stdin);
+    //   freopen("output.txt", "w", stdout);
+    // #endif
+    cin>>n>>m;
+    for(int i=0;i<n;i++)
+    {
+        for(int j=0;j<m;j++)
+        {
+            pos[i][j]=false;
+            dis[i][j]=MAX;
+            dism[i][j]=MAX;
+            cin>>A[i][j];
+            if(A[i][j] == 'A')
+            {
+                sx=i;
+                sy=j;
+                dis[i][j]=0;
+            }
+            if(A[i][j] =='M')
+            {
+                monsters.pb({i,j});
+            }
+        }
+    }
+    dfs(sx,sy);
+    queue<pii> q;
+    for(int i=0;i<monsters.size();i++)
+    {
+        dism[monsters[i].F][monsters[i].S]=0;
+        q.push({monsters[i].F,monsters[i].S});
+    }
+    while(!q.empty())
+    {
+        pii node=q.front();
+        q.pop();
+        for(int i=0;i<4;i++)
+        {
+            int X=node.F + arrx[i];
+            int Y=node.S + arry[i];
+            if(X < 0 || X >=n || Y<0 || Y>=m)
+                continue;
+            if(A[X][Y]=='A' || A[X][Y]=='.')
+            {
+                if(dism[X][Y] > dism[node.F][node.S] + 1)
+                {
+                    dism[X][Y]=dism[node.F][node.S] +1;
+                    q.push({X,Y});
+                }
+            }
+        }   
+    }
+
+    
+    
+    for(int i=0;i<n;i++)
+    {
+        for(int j=0;j<m;j++)
+        {
+            if(dis[i][j] < dism[i][j])
+                pos[i][j]=true;
+        }
+    }
+    
+    int posx,posy;
+    bool flag=false;
+    for(int i=0;i<n;i++)
+    {
+        if(pos[i][0])
+        {
+            flag=true;
+            posx=i;
+            posy=0;
+            break;
+        }
+        if(pos[i][m-1])
+        {
+            flag=true;
+            posx=i;
+            posy=m-1;
+            break;
+        }
+    }
+    if(!flag)
+    {
+        for(int i=0;i<m;i++)
+        {
+            if(pos[0][i]){
+                flag=true;
+                posx=0;
+                posy=i;
+                break;
+            }
+            if(pos[n-1][i])
+            {
+                flag=true;
+                posx=n-1;
+                posy=i;
+                break;
+            }
+        }
+    }
+    if(!flag)
+    {
+        cout<<"NO"<<endl;
+    }
+    else
+    {
+        string answer="";
+        int x=posx,y=posy;
+        while(x!=sx || y!=sy)
+        {
+            for(int i=0;i<4;i++)
+            {
+                int X=x+arrx[i];
+                int Y=y+arry[i];
+                if(x < 0 || x>=n || y<0 || y>=m)
+                    continue;
+                if(pos[X][Y] && dis[X][Y]==dis[x][y]-1)
+                {
+                    answer+=ans[i];
+                    x=X;y=Y;
+                    break;
+                }
+            }
+        }
+        cout<<"YES"<<endl;
+        cout<<answer.size()<<endl;
+        reverse(answer.begin(),answer.end());
+        cout<<answer<<endl;
+
+
+    }
+    return 0;
+}
