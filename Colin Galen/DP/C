@@ -1,0 +1,45 @@
+//https://github.com/rkas123/TEMPLATE/blob/master/Template.cpp
+//Template taken from here
+
+using namespace std;
+int main()
+{
+    // ios_base::sync_with_stdio(false);
+    // cin.tie(NULL);
+    // #ifndef ONLINE_JUDGE
+    //   freopen("input.txt", "r", stdin);
+    //   freopen("output.txt", "w", stdout);
+    // #endif
+    map<string,ll> m;
+    m["A"]=inf;
+    m["B"]=inf;
+    m["C"]=inf;
+    m["AB"]=inf;
+    m["BC"]=inf;
+    m["AC"]=inf;
+    m["ABC"]=inf;
+    in(n);
+    while(n--)
+    {
+        inl(t);
+        string s;
+        cin>>s;
+        sort(s.begin(),s.end());
+        m[s]=min(m[s],t);
+    }
+    ll answer=m["A"]+m["B"]+m["C"];
+    answer=min(answer,m["ABC"]);
+    answer=min(answer,m["A"] + m["BC"]);
+    answer=min(answer,m["B"] + m["AC"]);
+    answer=min(answer,m["C"] + m["AB"]);
+    ll temp=m["AB"]+m["BC"]+m["AC"];
+    temp-=max(max(m["AB"],m["BC"]),m["AC"]);
+    answer=min(answer,temp);
+    if(answer==inf)
+    {
+        answer=-1;
+    }
+    cout<<answer<<endl;
+
+    return 0;
+}
