@@ -1,0 +1,47 @@
+//https://github.com/rkas123/TEMPLATE/blob/master/Template.cpp
+//Template taken from here
+
+using namespace std;
+int main()
+{
+    // ios_base::sync_with_stdio(false);
+    // cin.tie(NULL);
+    // #ifndef ONLINE_JUDGE
+    //   freopen("input.txt", "r", stdin);
+    //   freopen("output.txt", "w", stdout);
+    // #endif
+    in(n);
+    in(k);
+    string s;
+    cin>>s;
+    bool pos[26];
+    for(int i=0;i<26;i++)
+        pos[i]=false;
+    for(int i=0;i<k;i++)
+    {
+        char ch;
+        cin>>ch;
+        pos[ch-'a']=true;
+    }
+    ll answer=0;
+    int i=0;
+    while(i<n)
+    {
+        if(!pos[s[i]-'a'])
+        {
+            i++;
+        }
+        else
+        {
+            ll count=0;
+            while(i<n && pos[s[i]-'a'])
+            {
+                i++;
+                count++;
+            }
+            answer+=((count)*(count+1))/2;
+        }
+    }
+    cout<<answer<<endl;
+    return 0;
+}
