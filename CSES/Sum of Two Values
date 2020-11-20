@@ -1,0 +1,47 @@
+//https://github.com/rkas123/TEMPLATE/blob/master/Template.cpp
+//Template taken from here
+
+using namespace std;
+int main()
+{
+    // ios_base::sync_with_stdio(false);
+    // cin.tie(NULL);
+    // #ifndef ONLINE_JUDGE
+    //   freopen("input.txt", "r", stdin);
+    //   freopen("output.txt", "w", stdout);
+    // #endif
+    in(n);in(sum);
+    pii A[n];
+    for(int i=0;i<n;i++)
+    {
+        cin>>A[i].F;
+        A[i].S=i+1;
+    }
+    sort(A,A+n);
+    int s=0,e=n-1;
+    bool flag=false;
+    while(s<e)
+    {
+        int temp=A[s].F + A[e].F;
+        if(temp==sum)
+        {
+            flag=true;
+            break;
+        }
+        if(temp < sum)
+        {
+            s++;
+        }
+        else
+        {
+            e--;
+        }
+    }
+    if(flag)
+    {
+        cout<<A[s].S <<" "<<A[e].S<<endl;
+    }
+    else
+        cout<<"IMPOSSIBLE"<<endl;
+    return 0;
+}
