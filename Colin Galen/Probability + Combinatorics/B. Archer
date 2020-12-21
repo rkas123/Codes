@@ -1,0 +1,19 @@
+//https://github.com/rkas123/TEMPLATE/blob/master/Template.cpp
+//Template taken from here
+
+using namespace std;
+int main()
+{
+    // ios_base::sync_with_stdio(false);
+    // cin.tie(NULL);
+    // #ifndef ONLINE_JUDGE
+    //   freopen("input.txt", "r", stdin);
+    //   freopen("output.txt", "w", stdout);
+    // #endif
+    double a,b,c,d;
+    cin>>a>>b>>c>>d;
+    double answer=a*d;
+    answer/=(b*c + a*d - a*c);
+    cout<<setprecision(10)<<answer<<endl;
+    return 0;
+}
