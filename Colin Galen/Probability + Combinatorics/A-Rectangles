@@ -1,0 +1,65 @@
+//https://github.com/rkas123/TEMPLATE/blob/master/Template.cpp
+//Template taken from here
+
+using namespace std;
+ll fastexp(ll a,ll b)
+{
+    ll ans=1;
+    ll temp=a;
+    while(b>0)
+    {
+        if(b&1)
+            ans*=(temp);
+        temp*=temp;
+        b>>=1;
+    }
+    return ans;
+
+}
+int main()
+{
+    // ios_base::sync_with_stdio(false);
+    // cin.tie(NULL);
+    // #ifndef ONLINE_JUDGE
+    //   freopen("input.txt", "r", stdin);
+    //   freopen("output.txt", "w", stdout);
+    // #endif
+    in(r);in(w);
+    int A[r][w];
+    for(int i=0;i<r;i++)
+    {
+        for(int j=0;j<w;j++)
+        {
+            cin>>A[i][j];
+        }
+    }
+    ll answer=0;
+    for(int i=0;i<r;i++)
+    {
+        ll sum=0;
+        for(int j=0;j<w;j++)
+        {
+            if(A[i][j]==0)
+            {
+                sum++;
+            }
+        }
+        answer+=(fastexp(2,sum) - 1);
+        answer+=(fastexp(2,w-sum) - 1);
+    }
+    for(int i=0;i<w;i++)
+    {
+        ll sum=0;
+        for(int j=0;j<r;j++)
+        {
+            if(A[j][i] == 0)
+            {
+                sum++;
+            }
+        }
+        answer+=(fastexp(2,sum) - 1 - sum);
+        answer+=(fastexp(2,r-sum) - 1 - (r-sum));
+    }
+    cout<<answer<<endl;
+    return 0;
+}
