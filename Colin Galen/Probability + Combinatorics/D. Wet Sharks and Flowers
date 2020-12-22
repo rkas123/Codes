@@ -1,0 +1,39 @@
+//https://github.com/rkas123/TEMPLATE/blob/master/Template.cpp
+//Template taken from here
+
+using namespace std;
+int main()
+{
+    // ios_base::sync_with_stdio(false);
+    // cin.tie(NULL);
+    // #ifndef ONLINE_JUDGE
+    //   freopen("input.txt", "r", stdin);
+    //   freopen("output.txt", "w", stdout);
+    // #endif
+    inl(n);inl(p);
+    ll L[n],R[n];
+    for(int i=0;i<n;i++)
+    {
+        cin>>L[i]>>R[i];
+    }
+    
+    double prop=0;
+    for(int i=0;i<n;i++)
+    {
+        int j=(i+1)%n;
+        double l1=R[i]/p;
+        l1-=(L[i]-1)/p;
+        double l2=(R[j])/p;
+        l2-=(L[j]-1)/p;
+        double domaini=R[i]-L[i]+1;
+        double domainj=R[j]-L[j]+1;
+        double temp=(l1/domaini);
+        temp+=(l2/domainj);
+        temp-=((l1*l2)/(domainj*domaini));
+        prop+=temp;
+    }
+    
+    double answer=prop*2000;
+    cout<<setprecision(10)<<answer<<endl;
+    return 0;
+}
