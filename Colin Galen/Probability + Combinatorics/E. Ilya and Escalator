@@ -1,0 +1,71 @@
+#include<bits/stdc++.h>
+
+#define ll long long
+#define pii pair<int,int>
+#define pll pair<long long,long long>
+
+#define inl(x) long long x;cin>>x
+#define in(x) int x;cin>>x
+#define pb push_back
+#define F first
+#define S second
+#define endl "\n"
+
+#define test() int t;cin>>t;while(t--)
+#define KStest() int t,t1;cin>>t;t1=t;while(t--)
+#define KScout cout<<"Case #"<<t1-t<<": "
+
+const long long mod = 1e9+7;
+const int MAX = INT_MAX;
+const long long inf = 1e18 + 5;
+const double pi = 3.14159265358979323846; 
+
+int dirX[]={1,-1,0,0};
+int dirY[]={0,0,1,-1};
+
+using namespace std;
+int n,t;
+double p;
+double dp[2002][2002];
+int main()
+{
+    // ios_base::sync_with_stdio(false);
+    // cin.tie(NULL);
+    // #ifndef ONLINE_JUDGE
+    //   freopen("input.txt", "r", stdin);
+    //   freopen("output.txt", "w", stdout);
+    // #endif
+	cin>>n>>p>>t;
+	n++;
+	for(int i=0;i<=n;i++)
+	{
+		for(int j=0;j<i;j++)
+		{
+			dp[i][j]=0;
+		}
+	}
+	for(int i=0;i<=n;i++)
+	{
+		dp[0][i]=0;
+		dp[i][0]=0;
+	}
+	dp[1][0]=1;
+	for(int i=1;i<=n;i++)
+	{
+		for(int j=1;j<=t;j++)
+		{
+			dp[i][j]=dp[i-1][j-1]*p;
+			if(i==n)
+				dp[i][j]+=dp[i][j-1];
+			else
+				dp[i][j]+=(dp[i][j-1] * (1-p));
+		}
+	}
+	double answer=0;
+	for(int i=2;i<=n;i++)
+	{
+		answer+= ((i-1)*dp[i][t]);
+	}
+	cout<<setprecision(10)<<answer<<endl;
+    return 0;
+}
