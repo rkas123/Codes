@@ -1,0 +1,186 @@
+#include<bits/stdc++.h>
+
+#define int long long
+#define pii pair<int32_t,int32_t>
+#define pll pair<long long,long long>
+
+#define in(x) long long x;cin>>x
+#define ini(x) int32_t x;cin>>x
+#define pb push_back
+#define F first
+#define S second
+#define endl "\n"
+#define segleft 2*index+1
+#define segright 2*index+2
+
+#define test() int t;cin>>t;while(t--)
+#define KStest() int t,t1;cin>>t;t1=t;while(t--)
+#define KScout cout<<"Case #"<<t1-t<<": "
+
+const long long mod = 1e9+7;
+const int MAX = INT_MAX;
+const long long inf = 1e18 + 5;
+const double pi = 3.14159265358979323846; 
+
+int dirX[]={1,-1,0,0};
+int dirY[]={0,0,1,-1};
+
+using namespace std;
+int stringtoint(string s)
+{
+	int ans=0;
+	int i=0;
+	while(i<s.length())
+	{
+		int dig=s[i]-'0';
+		ans*=10;
+		ans+=dig;
+		i++;
+	}
+	return ans;
+}
+int tree[800005];
+int lazy[800005];
+void update(int index,int s,int e,int l,int r,int val)
+{
+	if(s>r || e<l)
+		return;
+	if(s>=l && e<=r)
+	{
+		lazy[index]+=val;
+		tree[index]+=val;
+		return;
+	}
+	int mid=(s+e)/2;
+	lazy[segleft]+=lazy[index];
+	lazy[segright]+=lazy[index];
+	tree[segleft]+=lazy[index];
+	tree[segright]+=lazy[index];
+	lazy[index]=0;
+	update(segleft,s,mid,l,r,val);
+	update(segright,mid+1,e,l,r,val);
+	tree[index]=min(tree[segleft],tree[segright]);
+}
+int query(int index,int s,int e,int l,int r)
+{
+	if(s>r || e<l)
+		return inf;
+	if(s>=l && e<=r)
+	{
+		return tree[index];
+	}
+	int mid=(s+e)/2;
+	lazy[segleft]+=lazy[index];
+	lazy[segright]+=lazy[index];
+	tree[segleft]+=lazy[index];
+	tree[segright]+=lazy[index];
+	lazy[index]=0;
+	int ans=query(segleft,s,mid,l,r);
+	ans=min(ans,query(segright,mid+1,e,l,r));
+	return ans;
+}
+int getindex(int index,int s,int e)
+{
+	if(s==e)
+		return index;
+	int mid=(s+e)/2;
+	return getindex(segleft,s,mid);
+}
+void buildtree(int index,int s,int e)
+{
+	if(s==e)
+		return;
+	int mid=(s+e)/2;
+	buildtree(segleft,s,mid);
+	buildtree(segright,mid+1,e);
+	tree[index]=min(tree[segleft],tree[segright]);
+}
+int32_t main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    #ifndef ONLINE_JUDGE
+      freopen("input.txt", "r", stdin);
+      freopen("output.txt", "w", stdout);
+    #endif
+	in(n);
+	int size=1;
+	while(size<n)
+		size*=2;
+	int treesize=size*2;
+	for(int i=0;i<treesize;i++)
+	{
+		tree[i]=inf;
+		lazy[i]=0;
+	}
+	int index=getindex(0,0,size-1);
+	for(int i=0;i<n;i++)
+	{
+		in(t);
+		tree[index]=t;
+		index++;
+	}
+	buildtree(0,0,size-1);
+	in(m);
+	cin.ignore();
+	while(m--)
+	{
+		string s;
+		getline(cin,s);
+		vector<int> v;
+		int i=0;
+		while(i<s.length())
+		{
+			if(s[i]==' ')
+				i++;
+			bool flag=false;
+			if(s[i]=='-'){
+				flag=true;
+				i++;
+			}
+			int l=i;
+			int len=0;
+			while(i<s.length() && s[i]!=' ')
+			{
+				i++;
+			}
+			//cout<<l<<" ";
+			int num=stringtoint(s.substr(l,i-l));
+			if(flag)
+				v.pb(-1*num);
+			else
+				v.pb(num);
+		}
+		if(v.size()==2)
+		{
+			int l=v[0];
+			int r=v[1];
+			if(l>r)
+			{
+				int ans=query(0,0,size-1,l,n-1);
+				ans=min(ans,query(0,0,size-1,0,r));
+				cout<<ans<<endl;
+			}
+			else
+			{
+				cout<<query(0,0,size-1,l,r)<<endl;
+			}
+		}
+		else
+		{
+			int l=v[0];
+			int r=v[1];
+			int val=v[2];
+			if(l>r)
+			{
+				update(0,0,size-1,l,n-1,val);
+				update(0,0,size-1,0,r,val);
+			}
+			else
+			{
+				update(0,0,size-1,l,r,val);
+			}
+		}
+	}
+    return 0;
+}
