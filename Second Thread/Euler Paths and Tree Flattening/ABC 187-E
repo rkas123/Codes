@@ -1,0 +1,125 @@
+#include<bits/stdc++.h>
+
+#define int long long
+#define pii pair<int32_t,int32_t>
+#define pll pair<long long,long long>
+
+#define in(x) long long x;cin>>x
+#define ini(x) int32_t x;cin>>x
+#define pb push_back
+#define F first
+#define S second
+#define endl "\n"
+#define segleft 2*ind+1
+#define segright 2*ind+2
+
+#define test() int t;cin>>t;while(t--)
+#define KStest() int t,t1;cin>>t;t1=t;while(t--)
+#define KScout cout<<"Case #"<<t1-t<<": "
+
+const long long mod = 1e9+7;
+const int MAX = INT_MAX;
+const long long inf = 1e18 + 5;
+const double pi = 3.14159265358979323846; 
+
+int dirX[]={1,-1,0,0};
+int dirY[]={0,0,1,-1};
+
+using namespace std;
+vector<int> adjlist[200005];
+bool vis[200005];
+int depth[200005];
+int ind;
+int ans[200005];
+pll indes[200005];
+
+void dfs(int src,int d)
+{
+	vis[src]=true;
+	ind++;
+	indes[src].F=ind;
+	depth[src]=d;
+	
+	for(auto it: adjlist[src])
+	{
+		if(!vis[it])
+		dfs(it,d+1);
+	}
+	indes[src].S=ind;
+}
+int32_t main()
+{
+    // ios_base::sync_with_stdio(false);
+    // cin.tie(NULL);
+    // #ifndef ONLINE_JUDGE
+    //   freopen("input.txt", "r", stdin);
+    //   freopen("output.txt", "w", stdout);
+    // #endif
+	in(n);
+	vector<pll> edges;
+	ans[0]=0;
+	ans[n+1]=1;
+	for(int i=1;i<=n;i++)
+	{
+		vis[i]=false;
+		depth[i]=0;
+		ans[i]=0;
+	}
+	for(int i=1;i<n;i++)
+	{
+		in(a);in(b);
+		adjlist[a].pb(b);
+		adjlist[b].pb(a);
+		edges.pb({a,b});
+	}
+	ind=0;
+	dfs(1,0);
+	in(m);
+	while(m--)
+	{
+		in(t);in(i);in(val);
+		i--;
+		int u=edges[i].F;
+		int v=edges[i].S;
+		if(t==1)
+		{
+			
+			if(depth[u] < depth[v])
+			{
+				ans[0]+=val;
+				ans[n+1]-=val;
+				ans[indes[v].F]-=val;
+				ans[indes[v].S + 1]+=val;
+			}
+			else
+			{
+				ans[indes[u].F]+=val;
+				ans[indes[u].S + 1]-=val;
+			}
+		}
+		else
+		{
+			if(depth[v] < depth[u])
+			{
+				ans[0]+=val;
+				ans[n+1]-=val;
+				ans[indes[u].F]-=val;
+				ans[indes[u].S + 1]+=val;
+			}
+			else
+			{
+				ans[indes[v].F]+=val;
+				ans[indes[v].S+1]-=val;
+			}
+		}
+	}
+	for(int i=1;i<=n;i++)
+	{
+		ans[i]+=ans[i-1];
+	}
+	for(int i=1;i<=n;i++)
+	{
+		cout<<ans[indes[i].F]<<endl;
+	}
+    return 0;
+}
