@@ -1,0 +1,72 @@
+#include<bits/stdc++.h>
+
+#define int long long
+#define pll pair<long long,long long>
+
+#define in(x) long long x;cin>>x
+#define pb push_back
+#define F first
+#define S second
+#define endl "\n"
+#define segleft 2*index+1
+#define segright 2*index+2
+
+#define test() int t;cin>>t;while(t--)
+#define KStest() int t,t1;cin>>t;t1=t;while(t--)
+#define KScout cout<<"Case #"<<t1-t<<": "
+
+const long long mod = 1e9+7;
+const int MAX = INT_MAX;
+const long long inf = 1e18 + 5;
+const double pi = 3.14159265358979323846; 
+
+int dirX[]={1,-1,0,0};
+int dirY[]={0,0,1,-1};
+
+using namespace std;
+
+int32_t main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    #ifndef ONLINE_JUDGE
+      freopen("input.txt", "r", stdin);
+      freopen("output.txt", "w", stdout);
+    #endif
+    in(n);in(k);in(p);
+    int people[n],keys[k];
+    for(int i=0;i<n;i++)
+    	cin>>people[i];
+    for(int j=0;j<k;j++)
+    {
+    	cin>>keys[j];
+    }
+    sort(people,people+n);
+    sort(keys,keys+k);
+    int dp[n][k];
+    for(int i=0;i<n;i++)
+    {
+    	for(int j=0;j<k;j++)
+    		dp[i][j]=inf;
+    }
+    dp[0][0]=abs(people[0]-keys[0]) + abs(keys[0]-p);
+    for(int i=1;i<k;i++)
+    {
+    	dp[0][i]=min(dp[0][i-1],abs(people[0]-keys[i]) + abs(keys[i]-p));
+    }
+    for(int i=1;i<n;i++)
+    {
+    	for(int j=i;j<k;j++)
+    	{
+    		dp[i][j]=min(dp[i][j-1],max(dp[i-1][j-1],abs(people[i]-keys[j]) + abs(keys[j]-p)));
+    	}
+    }
+    int ans=inf;
+    for(int i=0;i<k;i++)
+    {
+    	ans=min(ans,dp[n-1][i]);
+    }
+    
+    cout<<ans<<endl;
+    return 0;
+}
