@@ -1,0 +1,96 @@
+#include<bits/stdc++.h>
+
+#define int long long
+#define pll pair<long long,long long>
+
+#define in(x) long long x;cin>>x
+#define pb push_back
+#define F first
+#define S second
+#define endl "\n"
+#define segleft 2*index+1
+#define segright 2*index+2
+
+#define test() int t;cin>>t;while(t--)
+#define KStest() int t,t1;cin>>t;t1=t;while(t--)
+#define KScout cout<<"Case #"<<t1-t<<": "
+
+const long long mod = 998244353;
+const int MAX = INT_MAX;
+const long long inf = 1e18 + 5;
+const double pi = 3.14159265358979323846; 
+
+int dirX[]={1,-1,0,0};
+int dirY[]={0,0,1,-1};
+
+using namespace std;
+int N=5001;
+int factorial[5001];
+int invfact[5001];
+int ncr(int n, int r)
+{
+    if(r>n)
+        return 0;
+    int num=factorial[n];
+    num*=invfact[r];
+    num%=mod;
+    num*=invfact[n-r];
+    num%=mod;
+    return num;
+}
+int fastexp(int a,int b)
+{
+    int ans=1;
+    int temp=a;
+    while(b>0)
+    {
+        if(b&1)
+            ans=(ans*temp)%mod;
+        temp=(temp*temp)%mod;
+        b>>=1;
+    }
+    return ans;
+}
+int func(int a,int b)
+{
+	int ans=0;
+	int less=min(a,b);
+	for(int i=0;i<=less;i++)
+	{
+		int temp=(ncr(a,i)*ncr(b,i))%mod;
+		temp*=(factorial[i]);
+		temp%=mod;
+		ans+=temp;
+		ans%=mod;
+	}
+	return ans;
+}
+int32_t main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    #ifndef ONLINE_JUDGE
+      freopen("input.txt", "r", stdin);
+      freopen("output.txt", "w", stdout);
+    #endif
+    factorial[0]=1;
+    for(int i=1;i<N;i++)
+    {
+        factorial[i]=(factorial[i-1]*i)%mod;
+    }
+
+    invfact[N-1]=fastexp(factorial[N-1],mod-2);
+    for(int i=N-2;i>=0;i--)
+    {
+        invfact[i]=invfact[i+1]*(i+1);
+        invfact[i]%=mod;
+    }
+    in(a);in(b);in(c);
+    int ans=func(a,b);
+    ans*=func(a,c);
+    ans%=mod;
+    ans*=func(c,b);
+    ans%=mod;
+    cout<<ans<<endl;
+    return 0;
+}
