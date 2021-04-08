@@ -1,0 +1,78 @@
+#include<bits/stdc++.h>
+
+// #define int long long
+#define pll pair<int,int>
+
+#define in(x) int x;cin>>x
+#define pb push_back
+#define F first
+#define S second
+#define endl "\n"
+#define segleft 2*index+1
+#define segright 2*index+2
+
+#define test() int t;cin>>t;while(t--)
+#define KStest() int t,t1;cin>>t;t1=t;while(t--)
+#define KScout cout<<"Case #"<<t1-t<<": "
+#define deb(x) cout<<#x<<" "<<x<<endl;
+
+const long long mod = 1e9 + 7;
+const int MAX = INT_MAX;
+const long long inf = 1e18 + 5;
+const double pi = 3.14159265358979323846;
+
+int dirX[] = {1, -1, 0, 0};
+int dirY[] = {0, 0, 1, -1};
+
+using namespace std;
+
+int32_t main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+// #ifndef ONLINE_JUDGE
+// 	freopen("input.txt", "r", stdin);
+// 	freopen("output.txt", "w", stdout);
+// #endif
+	in(n); in(x);
+	vector<pll> v;
+	for (int i = 0; i < n; i++)
+	{
+		in(temp);
+		v.pb({temp, 0});
+	}
+	for (int i = 0; i < n; i++)
+	{
+		cin >> v[i].S;
+	}
+	sort(v.begin(), v.end());
+	int dp[x + 1][n];
+	for (int i = 0; i < n; i++)
+	{
+		dp[0][i] = 0;
+	}
+	for (int i = 1; i <= x; i++)
+	{
+		if (i >= v[0].F)
+		{
+			dp[i][0] = v[0].S;
+		}
+		else
+		{
+			dp[i][0] = 0;
+		}
+		for (int j = 1; j < n; j++)
+		{
+			if (i >= v[j].F)
+			{
+				dp[i][j] = max(dp[i][j - 1], v[j].S + dp[i - v[j].F][j - 1]);
+			}
+			else
+			{
+				dp[i][j] = dp[i][j - 1];
+			}
+		}
+	}
+	cout << dp[x][n - 1] << endl;
+	return 0;
+}
