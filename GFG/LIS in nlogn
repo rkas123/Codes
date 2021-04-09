@@ -42,12 +42,9 @@ int32_t main()
 	}
 	for (int i = 0; i < n; i++)
 	{
-		for (int j = 1; j <= n; j++)
-		{
-			int index = upper_bound(dp.begin(), dp.end(), A[i]) - dp.begin();
-			if (dp[index - 1] < A[i] && A[i] < dp[index])
-				dp[index] = A[i];
-		}
+		int index = upper_bound(dp.begin(), dp.end(), A[i]) - dp.begin();
+		if (dp[index - 1] < A[i] && A[i] < dp[index])
+			dp[index] = A[i];
 	}
 	int ans = 0;
 
