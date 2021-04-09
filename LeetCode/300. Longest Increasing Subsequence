@@ -1,0 +1,22 @@
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& v) {
+        int n=v.size();
+        vector<int> dp(n+1,1e9);
+        dp[0]=-1*(1e9);
+        for(int i=0;i<n;i++)
+        {
+            
+                int index = upper_bound(dp.begin(),dp.end(),v[i]) - dp.begin();
+                if(dp[index-1] < v[i] && v[i] < dp[index])
+                    dp[index]=v[i];
+        }
+        int ans=0;
+        for(int i=1;i<=n;i++)
+        {
+            if(dp[i] < 1e9)
+                ans=i;
+        }
+        return ans;
+    }
+};
