@@ -1,0 +1,72 @@
+class Solution {
+public:
+    map<int,vector<int>> adjlist;
+    set<int> pres;
+    map<int,bool> vis;
+    map<int,vector<int>> X,Y;
+    int getHash(int x,int y)
+    {
+        return x*10000 + y;
+    }
+    bool valid(int x,int y)
+    {
+        if(x < 0 || y< 0 || x>1e4 || y>1e4)
+            return false;
+        return true;
+    }
+    void dfs(int src)
+    {
+        vis[src]=true;
+        for(auto it: adjlist[src])
+        {
+            if(!vis[it])
+                dfs(it);
+        }
+    }
+    int removeStones(vector<vector<int>>& stones) {
+        
+        for(auto it: stones)
+        {
+            int Hash = getHash(it[0],it[1]);
+            pres.insert(Hash);
+        }
+        for(auto it: stones)
+        {
+            int currHash = getHash(it[0],it[1]);
+            X[it[0]].push_back(currHash);
+            Y[it[1]].push_back(currHash);
+        }
+        for(auto it: X)
+        {
+            for(int i=0;i<it.second.size();i++)
+            {
+                for(int j=i+1;j<it.second.size();j++)
+                {
+                    adjlist[it.second[i]].push_back(it.second[j]);
+                    adjlist[it.second[j]].push_back(it.second[i]);
+                }
+            }
+        }
+        for(auto it: Y)
+        {
+            for(int i=0;i<it.second.size();i++)
+            {
+                for(int j=i+1;j<it.second.size();j++)
+                {
+                    adjlist[it.second[i]].push_back(it.second[j]);
+                    adjlist[it.second[j]].push_back(it.second[i]);
+                }
+            }
+        }
+        int count=0;
+        for(auto it: stones)
+        {
+            int currHash =getHash(it[0],it[1]);
+            if(vis[currHash])
+                continue;
+            count++;
+            dfs(currHash);
+        }
+        return stones.size() - count;
+    }
+};
