@@ -1,0 +1,89 @@
+#include<bits/stdc++.h>
+
+#define int long long
+#define pll pair<long long,long long>
+
+#define in(x) long long x;cin>>x
+#define pb push_back
+#define F first
+#define S second
+#define endl "\n"
+
+#define test() int t;cin>>t;while(t--)
+#define KStest() int t,t1;cin>>t;t1=t;while(t--)
+#define KScout cout<<"Case #"<<t1-t<<": "
+#define deb(x) cout<<#x<<" "<<x<<endl;
+
+const long long mod = 1e9 + 7;
+const int MAX = INT_MAX;
+const long long inf = 1e18 + 5;
+const double pi = 3.14159265358979323846;
+
+int dirX[] = {1, -1, 0, 0};
+int dirY[] = {0, 0, 1, -1};
+using namespace std;
+vector<int> adjlist[2501];
+
+int n;
+int func(int src)
+{
+	vector<bool> vis(n + 1);
+	vector<int> parent(n + 1);
+	vector<int> dist(n + 1, inf);
+	for (int i = 1; i <= n; i++)
+		vis[i] = false;
+	queue<int> q;
+	dist[src] = 0;
+	vis[src] = true;
+	q.push(src);
+	parent[src] = src;
+	int pos = inf;
+	while (!q.empty())
+	{
+		int node = q.front();
+		q.pop();
+		for (auto it : adjlist[node])
+		{
+			if (it == parent[node])
+			{
+				continue;
+			}
+			if (vis[it])
+			{
+				pos = min (pos, dist[node] + dist[it] + 1);
+				continue;
+			}
+			q.push(it);
+			vis[it] = true;
+			dist[it] = dist[node] + 1;
+			parent[it] = node;
+		}
+	}
+	return pos;
+}
+int32_t main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+#ifndef ONLINE_JUDGE
+	freopen("input.txt", "r", stdin);
+	freopen("output.txt", "w", stdout);
+#endif
+	cin >> n; in(m);
+	for (int i = 0; i < m; i++)
+	{
+		in(a); in(b);
+		adjlist[a].pb(b);
+		adjlist[b].pb(a);
+	}
+	int answer = inf;
+	for (int i = 1; i <= n; i++)
+	{
+		answer = min(answer, func(i));
+	}
+	if (answer != inf)
+		cout << answer << endl;
+	else
+		cout << "-1" << endl;
+	return 0;
+}
