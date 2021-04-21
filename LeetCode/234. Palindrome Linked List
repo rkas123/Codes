@@ -29,3 +29,68 @@ public:
         return true;
     }
 };
+
+
+//
+
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* GetMid(ListNode* head)
+    {
+        ListNode* fast=head;
+        ListNode* slow=head;
+        while(fast!=NULL && fast->next != NULL)
+        {
+            fast=fast->next->next;
+            slow=slow->next;
+        }
+        if(fast!=NULL)
+            return slow->next;  
+        return slow;
+    }
+    ListNode* Reverse(ListNode* head)
+    {
+        ListNode* prev=NULL;
+        ListNode* Next =NULL;
+        while(1)
+        {
+            if(head->next == NULL)
+            {
+                head->next = prev;
+                return head;
+            }
+            Next = head->next;
+            head->next = prev;
+            prev=head;
+            head=Next;
+        }
+        return NULL;
+    }
+    bool isPalindrome(ListNode* head) {
+        if(head == NULL)
+            return false;
+        if(head->next == NULL)
+            return true;
+        ListNode* mid = GetMid(head);
+        mid = Reverse(mid);
+        while(mid!= NULL)
+        {
+            if(mid->val != head->val)
+                return false;
+            mid=mid->next;
+            head=head->next;
+        }
+        return true;
+    }
+};
