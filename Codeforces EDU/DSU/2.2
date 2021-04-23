@@ -1,0 +1,58 @@
+#include<bits/stdc++.h>
+
+#define int long long
+#define pll pair<long long,long long>
+
+#define in(x) long long x;cin>>x
+#define pb push_back
+#define F first
+#define S second
+#define endl "\n"
+
+#define test() int t;cin>>t;while(t--)
+#define KStest() int t,t1;cin>>t;t1=t;while(t--)
+#define KScout cout<<"Case #"<<t1-t<<": "
+#define deb(x) cout<<#x<<" "<<x<<endl;
+
+const long long mod = 1e9 + 7;
+const int MAX = INT_MAX;
+const long long inf = 1e18 + 5;
+const double pi = 3.14159265358979323846;
+
+int dirX[] = {1, -1, 0, 0};
+int dirY[] = {0, 0, 1, -1};
+
+using namespace std;
+int getParent(int x, int *parent)
+{
+	if (parent[x]  == x || parent[x] == -1)
+		return parent[x];
+	return parent[x] = getParent(parent[x], parent);
+}
+int join(int a, int b, int *parent)
+{
+	int parb = getParent(b, parent);
+	parent[a] = parb;
+}
+int32_t main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+#ifndef ONLINE_JUDGE
+	freopen("input.txt", "r", stdin);
+	freopen("output.txt", "w", stdout);
+#endif
+	in(n);
+	int parent[n + 1];
+	for (int i = 0; i < n; i++)
+		parent[i] = i;
+	for (int i = 0; i < n; i++)
+	{
+		in(x);
+		x--;
+		int par = getParent(x, parent);
+		join(par, (par + 1) % n, parent);
+		cout << par + 1 << " ";
+	}
+	return 0;
+}
