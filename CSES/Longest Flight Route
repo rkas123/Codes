@@ -1,0 +1,104 @@
+#include<bits/stdc++.h>
+
+#define int long long
+#define pll pair<long long,long long>
+
+#define in(x) long long x;cin>>x
+#define pb push_back
+#define F first
+#define S second
+#define endl "\n"
+
+#define test() int t;cin>>t;while(t--)
+#define KStest() int t,t1;cin>>t;t1=t;while(t--)
+#define KScout cout<<"Case #"<<t1-t<<": "
+#define deb(x) cout<<#x<<" "<<x<<endl;
+
+const long long mod = 1e9 + 7;
+const int MAX = INT_MAX;
+const long long inf = 1e18 + 5;
+const double pi = 3.14159265358979323846;
+
+int dirX[] = {1, -1, 0, 0};
+int dirY[] = {0, 0, 1, -1};
+
+using namespace std;
+map<int, bool> vis;
+map<int, vector<int>> adjlist;
+map<int, int> parent;
+map<int, int> indegree;
+map<int, int> dist;
+void dfs(int src)
+{
+	vis[src] = true;
+	for (auto it : adjlist[src])
+	{
+		indegree[it]++;
+		if (!vis[it])
+			dfs(it);
+	}
+}
+int32_t main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+#ifndef ONLINE_JUDGE
+	freopen("input.txt", "r", stdin);
+	freopen("output.txt", "w", stdout);
+#endif
+	in(n); in(m);
+	for (int i = 1; i <= n; i++)
+	{
+		parent[i] = i;
+		indegree[i] = 0;
+		dist[i] = 0;
+	}
+	for (int i = 0; i < m; i++)
+	{
+		in(a); in(b);
+		adjlist[a].pb(b);
+	}
+	queue<int> q;
+	dfs(1);
+	q.push(1);
+	bool flag = false;
+	while (!q.empty())
+	{
+		int node = q.front();
+		q.pop();
+		if (node == n)
+		{
+			flag = true;
+			int curr = n;
+			vector<int> order;
+			order.pb(curr);
+			while (curr != 1)
+			{
+				curr = parent[curr];
+				order.pb(curr);
+			}
+			reverse(order.begin(), order.end());
+			cout << order.size() << endl;
+			for (auto it : order)
+				cout << it << " ";
+			cout << endl;
+			break;
+		}
+		for (auto it : adjlist[node])
+		{
+			indegree[it]--;
+			if (dist[it] < dist[node] + 1)
+			{
+				dist[it] = dist[node] + 1;
+				parent[it] = node;
+			}
+			if (indegree[it] == 0)
+				q.push(it);
+		}
+	}
+	if (!flag)
+	{
+		cout << "IMPOSSIBLE" << endl;
+	}
+	return 0;
+}
