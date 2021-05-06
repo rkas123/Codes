@@ -1,0 +1,92 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Codec {
+public:
+    
+    string itos(int n)
+    {
+        if(n == 0)
+            return "0";
+        string ans = "";
+        bool sign = (n>=0);
+        n=abs(n);
+        while(n>0)
+        {
+            int rem = n%10;
+            ans += ('0' + rem);
+            n/=10;
+        }
+        reverse(ans.begin(),ans.end());
+        if(!sign)
+            ans= "-" + ans;
+        return ans;
+        
+    }
+    
+    int stoi(string s)
+    {
+        int i=0;
+        bool sign=true;
+        if(s[0] == '-')
+        {
+            sign=false;
+            i++;
+        }
+        int ans=0;
+        while(i<s.length())
+        {
+            int num = s[i]-'0';
+            ans*=10;
+            ans+=num;
+            i++;
+        }
+        if(!sign)
+            ans*= -1;
+        return ans;
+    }
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) {
+        if(root == NULL)
+            return "$ ";
+        string ans = itos(root->val);
+        ans+=" ";
+        ans += serialize(root->left);
+        ans += serialize(root->right);
+        return ans;
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode* dfs(string data,int &i)
+    {
+        string temp="";
+        while(i<data.length() && data[i]!=' ')
+        {
+            temp+=data[i];
+            i++;
+        }
+        i++;
+        if(temp == "$")
+            return NULL;
+        TreeNode* node = new TreeNode(stoi(temp));
+        node->left = dfs(data,i);
+        node->right = dfs(data,i);
+        return node;
+    }
+    
+    TreeNode* deserialize(string data) {
+        int i=0;
+        TreeNode* node = dfs(data,i);
+        return node;
+    }
+};
+
+// Your Codec object will be instantiated and called as such:
+// Codec ser, deser;
+// TreeNode* ans = deser.deserialize(ser.serialize(root));
