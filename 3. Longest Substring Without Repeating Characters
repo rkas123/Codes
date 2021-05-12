@@ -1,0 +1,27 @@
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        vector<int> count(130,0);
+        int i=0;
+        int ans=0;
+        for(int j=0;j<s.length();j++)
+        {
+            count[s[j]-'\0']++;
+            if(count[s[j]-'\0'] > 1)
+            {
+                while(count[s[j]-'\0']>1)
+                {
+                    count[s[i]-'\0']--;
+                    i++;
+                }
+                ans=max(ans,j-i+1);
+            }
+            else
+            {
+                ans=max(j-i+1,ans);
+            }
+            // cout<<i<<" "<<j<<endl;
+        }
+        return ans;
+    }
+};
