@@ -1,0 +1,90 @@
+class Node
+{
+    public:
+        Node* left;       // zero
+        Node* right;      // one
+        Node()
+        {
+            this->left = NULL;
+            this->right = NULL;
+        }
+};
+class Trie
+{
+    public:
+        Node* root;
+        
+        Trie()
+        {
+            root = new Node();
+        }
+        void insert(int num)
+        {
+            Node* temp = root;
+            for(int i=30;i>=0;i--)
+            {
+                if((1<<i) & num)
+                {
+                    if(temp -> right == NULL)
+                        temp->right =new Node();
+                    temp=temp->right;
+                }
+                else
+                {
+                    if(temp -> left == NULL)
+                        temp->left = new Node();
+                    temp=temp->left;
+                }
+            }
+        }
+        int Answer(int num)
+        {
+            int ans=0;
+            Node* temp = root;
+            int i=30;
+            while(temp!=NULL && i>=0)
+            {
+                if(num & (1<<i))
+                {
+                    if(temp->left == NULL)
+                        temp=temp->right;
+                    else
+                    {
+                        temp=temp->left;
+                        ans+=(1<<i);
+                    }
+                    
+                }
+                else
+                {
+                    if(temp->right == NULL)
+                    {
+                        temp=temp->left;
+                    }
+                    else
+                    {
+                        temp=temp->right;
+                        ans+=(1<<i);
+                    }
+                }
+                i--;
+            }
+            return ans;
+        }
+};
+class Solution {
+public:
+    int findMaximumXOR(vector<int>& nums) {
+        Trie t;
+        for(auto it: nums)
+        {
+            t.insert(it);
+        }
+        int ans=0;
+        for(auto it: nums)
+        {
+            ans=max(ans,t.Answer(it));
+        }
+        return ans;
+    }
+};
