@@ -1,0 +1,32 @@
+class Solution {
+public:
+    int longestValidParentheses(string s) {
+        s='$'+s;
+        int n =s.length();
+        vector<int> dp(n,0);
+        
+        for(int i=2;i<s.length();i++)
+        {
+            if(s[i]=='(')
+                dp[i]=0;
+            else
+            {
+                if(s[i-1] == '(')
+                    dp[i]=dp[i-2]+2;
+                else
+                {
+                    if(s[i-dp[i-1]-1] == '(')
+                    {
+                        dp[i] = dp[i-1] + dp[i-dp[i-1]-2] + 2;
+                    }
+                }
+            }
+        }
+        int ans=0;
+        for(int i=1;i<n;i++){
+            // cout<<dp[i]<<" ";
+            ans=max(ans,dp[i]);
+        }
+        return ans;
+    }
+};
