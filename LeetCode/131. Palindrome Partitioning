@@ -1,0 +1,44 @@
+class Solution {
+public:
+    void func(int s,int n,vector<vector<string>> &ans,vector<string>&curr,vector<vector<bool>> &dp,string st)
+    {
+        if(s==n)
+        {
+            ans.push_back(curr);
+            return;
+        }
+        for(int j=s;j<n;j++)
+        {
+            if(dp[s][j])
+            {
+                int len =j-s+1;
+                curr.push_back(st.substr(s,len));
+                func(j+1,n,ans,curr,dp,st);
+                curr.pop_back();
+            }
+        }
+    }
+    vector<vector<string>> partition(string s) {
+        int n=s.length();
+        vector<vector<string>> ans;
+        vector<vector<bool>> dp(n,vector<bool>(n,0));
+        
+        for(int i=n-1;i>=0;i--)
+        {
+            dp[i][i] = true;
+            if(i+1<n && s[i]==s[i+1])
+                dp[i][i+1] = true;
+            for(int j=i+2;j<n;j++)
+            {
+                if(s[i] == s[j])
+                {
+                    dp[i][j]=dp[i+1][j-1];
+                }
+            }
+        }
+        
+        vector<string> curr;
+        func(0,n,ans,curr,dp,s);
+        return ans;
+    }
+};
