@@ -1,0 +1,80 @@
+class node
+{
+    public:
+        char ch;
+        node* children[26];
+        bool terminal;
+        node(char ch)
+        {
+            this->ch=ch;
+            for(int i=0;i<26;i++)
+                this->children[i]=NULL;
+            this->terminal = false;
+        }
+};
+
+class trie
+{
+    public:
+        node* root;
+        trie()
+        {
+            this->root= new node('\0');
+        }
+        void insert(string s)
+        {
+            reverse(s.begin(),s.end());
+            node* temp =root;
+            for(int i=0;i<s.length();i++)
+            {
+                int index = s[i]-'a';
+                if(temp->children[index] == NULL)
+                {
+                    temp->children[index] = new node(s[i]);
+                }
+                temp=temp->children[index];
+            }
+            temp->terminal = true;
+        }
+        vector<int> query(string s)
+        {
+            vector<int> pos;
+            node* temp =root;
+            for(int i=s.length()-1;i>=0;i--)
+            {
+                int index = s[i]-'a';
+                if(temp->children[index] == NULL)
+                {
+                    return pos;
+                }
+                temp=temp->children[index];
+                if(temp->terminal == true)
+                    pos.push_back(i); 
+            }
+            return pos;
+        }
+};
+
+class Solution {
+public:
+    bool wordBreak(string s, vector<string>& wordDict) {
+        trie t;
+        for(auto it: wordDict)
+        {
+            t.insert(it);
+        }
+        s='$'+s;
+        int n=s.length();
+        vector<bool> dp(n,0);
+        dp[0]=true;
+        for(int i=1;i<n;i++)
+        {
+            vector<int> indexes = t.query(s.substr(1,i));
+            for(auto it: indexes)
+            {
+                dp[i] = dp[i] || dp[it];
+            }
+        }
+        return dp[n-1];
+    }
+};
