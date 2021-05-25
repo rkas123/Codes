@@ -1,0 +1,88 @@
+class Solution {
+public:
+    void insert(TreeNode* &root, int data)
+    {
+        if(root == NULL)
+        {
+            root = new TreeNode(data);
+            return;
+        }
+        if(root->val > data)
+        {
+            insert(root->left,data);
+        }
+        else
+        {
+            insert(root->right,data);
+        }
+    }
+    long long mod = 1e9+7;
+    
+    long long fastexp(int a,int b)
+    {
+        long long ans=1;
+        long long temp=a;
+        while(b>0)
+        {
+            if(b&1)
+                ans=(ans*temp)%mod;
+            temp=(temp*temp)%mod;
+            b>>=1;
+        }
+        return ans;
+    }
+    
+    long long ncr(int n, int r)
+    {
+        if(r>n)
+            return 0ll;
+        long long num=factorial[n];
+        num*=invfact[r];
+        num%=mod;
+        num*=invfact[n-r];
+        num%=mod;
+        return num;
+    }
+    long long factorial[1001];
+    long long invfact[1001];
+    int N = 1001;
+   
+    pair<long long,long long> dfs(TreeNode* root)   //ways,count of nodes
+    {
+        if(root == NULL)
+            return {1ll,0ll};
+        pair<long long,int> l = dfs(root->left);
+        pair<long long,int> r = dfs(root->right);
+    
+        long long ways = (l.first * r.first)%mod;
+    
+        int total = l.second+r.second;
+        ways = (ways*ncr(total,l.second))%mod;
+        int nodes = l.second + r.second + 1;
+        return {ways,nodes};
+    }
+    
+    int numOfWays(vector<int>& nums) {
+        factorial[0]=1ll;
+        for(int i=1ll;i<N;i++)
+        {
+            factorial[i]=(factorial[i-1]*i)%mod;
+        }
+
+        invfact[N-1]=fastexp(factorial[N-1],mod-2);
+        for(int i=N-2;i>=0;i--)
+        {
+            invfact[i]=invfact[i+1]*(i+1);
+            invfact[i]%=mod;
+        }
+        
+        TreeNode* root=NULL;
+        for(auto it: nums)
+        {
+            insert(root,it);
+        }
+        
+        return dfs(root).first -1;
+        
+    }
+};
