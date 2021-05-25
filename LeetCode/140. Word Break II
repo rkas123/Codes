@@ -1,0 +1,40 @@
+class Solution {
+public:
+    vector<string> wordBreak(string s, vector<string>& wordDict) {
+        set<string> dict;
+        for(auto it: wordDict)
+            dict.insert(it);
+        
+        s='$' + s;
+        int n=s.length();
+        vector<vector<string>> v(n);
+        
+        for(int i=1;i<n;i++)
+        {
+            string ti = s.substr(1,i);
+            if(dict.find(ti) != dict.end()){
+                v[i].push_back(ti);
+
+            }
+            
+            for(int j=2;j<=i;j++)
+            {
+                int len = i-j+1;
+                string temp=s.substr(j,len);
+                if(dict.find(temp) != dict.end())
+                {
+
+                    for(auto it: v[j-1])
+                    {
+                        string tt = it;
+                        tt+=" ";
+                        tt+=temp;
+                        v[i].push_back(tt);
+                    }
+                }
+            }
+        }
+        
+        return  v[n-1];
+    }
+};
