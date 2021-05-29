@@ -1,0 +1,38 @@
+class Solution {
+public:
+    int maximumGap(vector<int>& nums) {
+        int least=INT_MAX,greatest=INT_MIN;
+        int n= nums.size();
+        if(n<2)
+            return 0;
+        for(auto it: nums)
+        {
+            least=min(least,it);
+            greatest=max(greatest,it);
+        }
+        int gap = (greatest - least + n)/(n-1);
+        vector<int> bucketmin(n-1,INT_MAX);
+        vector<int> bucketmax(n-1,INT_MIN);
+        
+        for(auto it: nums)
+        {
+            if(it == least || it == greatest)
+                continue;
+            
+            int idx = (it-least)/gap;
+            bucketmin[idx] = min(bucketmin[idx],it);
+            bucketmax[idx] = max(bucketmax[idx],it);
+        }
+        int prev = least;
+        int ans=0;
+        for(int i=0;i<n-1;i++)
+        {
+            if(bucketmin[i] == INT_MAX)
+                continue;
+            ans = max(ans,bucketmin[i] - prev);
+            prev= bucketmax[i];
+        }
+        ans=max(ans,greatest-prev);
+        return ans;
+    }
+};
