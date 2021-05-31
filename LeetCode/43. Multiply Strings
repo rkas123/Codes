@@ -1,0 +1,40 @@
+class Solution {
+public:
+    string multiply(string num1, string num2) {
+        int l1=num1.length();
+        int l2=num2.length();
+        vector<int> ans (l1+l2,0);
+        int it1=0;
+        for(int i=l1-1;i>=0;i--)
+        {
+            int it2=0;
+            int n1 = num1[i]-'0';
+            int carry=0;
+            for(int j=l2-1;j>=0;j--)
+            {
+                int n2=(num2[j]-'0');
+                int sum = ans[it1+it2] + (n1*n2) + carry;
+                ans[it1+it2] = sum%10;
+                carry=sum/10;
+                it2++;
+            }
+            if(carry>0)
+            {
+                ans[it1+it2]+=carry;
+            }
+            it1++;
+        }
+        int i=l1+l2-1;
+        while(ans[i] == 0 && i>0)
+            i--;
+        string result="";
+        while(i>=0)
+        {
+            result += char(ans[i]+'0');
+            i--;
+        }
+        if(result.size() == 0)
+            return "0";
+        return result;
+    }
+};
