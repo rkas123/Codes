@@ -1,0 +1,54 @@
+class Solution {
+public:
+    int getParent(int n,vector<int>&parent)
+    {
+        if(n==parent[n])
+            return n;
+        return parent[n] = getParent(parent[n],parent);
+    }
+    void join(int a,int b,vector<int>&parent)
+    {
+        int pa=getParent(a,parent);
+        int pb=getParent(b,parent);
+        
+        if(pa == pb)
+            return;
+        parent[pa] = pb;
+    }
+    int longestConsecutive(vector<int>& nums) {
+        int n =nums.size();
+        unordered_map<int,int> m;
+        vector<int>parent(n);
+        for(int i=0;i<n;i++)
+            parent[i]=i;
+        
+        for(int i=0;i<n;i++)
+        {
+            m[nums[i]]=i;
+        }
+        for(int i=0;i<n;i++)
+        {
+            int idex = m[nums[i]];
+            int val = nums[i] - 1;
+            if(m.count(val)!=0)
+            {
+                join(idex,m[val],parent);
+            }
+            val = nums[i]+1;
+            if(m.count(val)!=0)
+            {
+                join(idex,m[val],parent);
+            }
+        }
+        vector<int> count(n,0);
+        for(int i=0;i<n;i++)
+        {
+            int p =getParent(i,parent);
+            count[p]++;
+        }
+        int ans=0;
+        for(auto it: count)
+            ans=max(it,ans);
+        return ans;
+    }
+};
