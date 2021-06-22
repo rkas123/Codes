@@ -1,0 +1,54 @@
+class Solution {
+public:
+    int dist(int src,int dest)
+    {
+        int sx = src/6;
+        int sy = src%6;
+        int dx = dest/6;
+        int dy = dest%6;
+        return abs(sx-dx) + abs(sy-dy);
+    }
+    int minimumDistance(string word) {
+        int n = word.size();
+        int first = word[0] - 'A';
+        vector<vector<int>> dp(26,vector<int>(26,INT_MAX));
+        vector<vector<int>> curr(26,vector<int>(26,INT_MAX));
+        
+        for(int i=0;i<26;i++)
+        {
+            dp[first][i]=0;
+        }
+        
+        for(int i=1;i<n;i++)
+        {
+            for(int j=0;j<26;j++)
+            {
+                for(int k=0;k<26;k++)
+                    curr[j][k]=INT_MAX;
+            }
+            
+            int num = word[i] - 'A';
+            
+            for(int j=0;j<26;j++)
+            {
+                for(int k=0;k<26;k++)
+                {
+                    if(dp[j][k] == INT_MAX)
+                        continue;
+                    curr[num][k] = min(curr[num][k],dp[j][k] + dist(j,num));
+                    curr[j][num] = min(curr[j][num],dp[j][k] + dist(k,num));
+                }
+            }
+            for(int j=0;j<26;j++)
+                for(int k=0;k<26;k++)
+                    dp[j][k] = curr[j][k];
+        }
+        int ans = INT_MAX;
+        for(int i=0;i<26;i++)
+        {
+            for(int j=0;j<26;j++)
+                ans=min(ans,dp[i][j]);
+        }
+        return ans;
+    }
+};
