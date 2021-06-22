@@ -1,0 +1,27 @@
+class Solution {
+public:
+    
+    int dfs(int src,vector<int> &informTime,vector<vector<int>> &adjlist)
+    {
+        int ans = 0;
+        if(adjlist[src].size() == 0)
+            return 0;
+        for(auto it: adjlist[src])
+        {
+            ans=max(ans,dfs(it,informTime,adjlist));
+        }
+        return ans+informTime[src];
+    }
+        
+        
+    int numOfMinutes(int n, int headID, vector<int>& manager, vector<int>& informTime) {
+        vector<vector<int>> adjlist(n);
+        for(int i=0;i<n;i++)
+        {
+            if(manager[i] == -1)
+                continue;
+            adjlist[manager[i]].push_back(i);
+        }
+        return dfs(headID,informTime,adjlist);
+    }
+};
