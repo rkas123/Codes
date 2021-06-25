@@ -1,0 +1,107 @@
+class Solution {
+public:
+    int left,right,dia;
+    pair<int,int> dfs(int src,vector<vector<int>>&adjlist,vector<int>&parent,vector<int>&dist)
+    {
+        pair<int,int> p1={-1,-1};    //depth,node
+        pair<int,int> p2={-1,-1};
+        
+        if(adjlist[src].size() == 1)
+        {
+            return {1,src};
+        }
+        
+        for(auto it: adjlist[src])
+        {
+            if(it == parent[src])
+                continue;
+            
+            parent[it] = src;
+            dist[it] = dist[src]+1;
+            pair<int,int> p = dfs(it,adjlist,parent,dist);
+            
+            if(p.first < p2.first)
+                continue;
+            if(p.first >= p1.first)
+            {
+                p2=p1;
+                p1=p;
+                continue;
+            }
+            if(p.first >= p2.first)
+            {
+                p2=p;
+                continue;
+            }
+        }
+        
+        
+        int pos = p1.first + p2.first + 1;
+        if(dia < pos && p2.first != -1)
+        {
+            dia=pos;
+            left = p1.second;
+            right = p2.second;
+        }
+        return {p1.first + 1,p1.second};
+    }
+    
+    vector<int> findMinHeightTrees(int n, vector<vector<int>>& edges) {
+        vector<int> ans;
+        if(n==1)
+        {
+            return {0};
+        }
+        if(n==2)
+        {
+            return {0,1};
+        }
+        vector<vector<int>> adjlist(n);
+        for(auto it: edges)
+        {
+            adjlist[it[0]].push_back(it[1]);
+            adjlist[it[1]].push_back(it[0]);
+        }
+        
+        int root=-1;
+        dia=-1;
+        left=-1,right=-1;
+        
+        for(int i=0;i<n;i++)
+        {
+            if(adjlist[i].size() > 1)
+            {
+                root = i;
+                break;
+            }
+        }
+        vector<int> parent(n),dist(n);
+        parent[root]=root;
+        dist[root]=0;
+        dfs(root,adjlist,parent,dist);
+        
+        int node;
+        if(dist[left] > dist[right])
+            node = left;
+        else
+            node = right;
+        
+        int moves = dia/2;
+        if(dia%2==0)
+            moves--;
+        while(moves>0)
+        {
+            node = parent[node];
+            moves--;
+        }
+        ans.push_back(node);
+        if(dia%2==0)
+        {
+            node = parent[node];
+            ans.push_back(node);
+        }
+        return ans;
+        
+        
+    }
+};
