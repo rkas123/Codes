@@ -1,0 +1,28 @@
+class Solution {
+public:
+    int minAreaRect(vector<vector<int>>& points) {
+        int ans=INT_MAX;
+        set<pair<int,int>> s;
+        for(auto it: points)
+        {
+            s.insert({it[0],it[1]});
+        }
+        int n = points.size();
+        for(int i=0;i<n;i++)
+        {
+            for(int j=i+1;j<n;j++)
+            {
+                if(points[i][0] == points[j][0] || points[i][1] == points[j][1])
+                    continue;
+                
+                if(s.find({points[i][0],points[j][1]}) != s.end() && s.find({points[j][0],points[i][1]}) != s.end())
+                {
+                    ans = min(ans,abs(points[i][0] - points[j][0]) * abs(points[i][1] - points[j][1]));
+                }
+            }
+        }
+        if(ans==INT_MAX)
+            return 0;
+        return ans;
+    }
+};
