@@ -1,0 +1,40 @@
+class Solution {
+public:
+    int shortestSubarray(vector<int>& nums, int k) {
+        int n = nums.size();
+        vector<int> sums(n);
+        sums[0]=nums[0];
+        for(int i=1;i<n;i++)
+        {
+            sums[i] = nums[i] + sums[i-1];
+        }
+        
+        deque<int> q;
+        int ans = INT_MAX;
+        
+        for(int i=0;i<n;i++)
+        {
+            if(sums[i] >= k)
+                ans=min(ans,i+1);
+            if(q.empty())
+            {
+                q.push_back(i);
+                continue;
+            }
+            int req = sums[i] - k;
+            while(!q.empty() && sums[q.front()] <= req)
+            {
+                ans = min(ans,i-q.front());
+                q.pop_front();
+            }
+            
+            while(!q.empty() && sums[q.back()] >= sums[i])
+                q.pop_back();
+            q.push_back(i);            
+        }
+        
+        if(ans == INT_MAX)
+            return -1;
+        return ans;
+    }
+};
