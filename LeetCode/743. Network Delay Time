@@ -1,0 +1,43 @@
+class Solution {
+public:
+    int networkDelayTime(vector<vector<int>>& times, int n, int k) {
+        vector<vector<pair<int,int>>> adjlist(n+1);
+        for(auto it: times)
+        {
+            adjlist[it[0]].push_back({it[1],it[2]});
+        }
+        vector<bool> vis(n+1,0);
+        vector<int> dist(n+1,INT_MAX);
+        dist[k]=0;
+        priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>> q;
+        q.push({0,k});
+        while(!q.empty())
+        {
+            pair<int,int> node = q.top();
+            q.pop();
+            if(vis[node.second])
+                continue;
+            vis[node.second]=true;
+            cout<<node.second<<" "<<node.first<<endl;
+            for(auto it: adjlist[node.second])
+            {
+                if(!vis[it.first] && dist[it.first] > node.first + it.second)
+                {
+                    dist[it.first] = node.first + it.second;
+                    q.push({dist[it.first],it.first});
+                }
+            }
+        }
+        for(int i=1;i<=n;i++)
+        {
+            if(!vis[i])
+                return -1;
+        }
+        int ans=0;
+        for(int i=1;i<=n;i++)
+        {
+            ans=max(ans,dist[i]);
+        }
+        return ans;
+    }
+};
