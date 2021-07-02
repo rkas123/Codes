@@ -1,0 +1,38 @@
+class Solution {
+public:
+    bool isNStraightHand(vector<int>& hand, int k) {
+        int n = hand.size();
+        
+        deque<int> q;
+        int opened=0;
+        map<int,int> m;
+        for(int i=0;i<n;i++)
+        {
+            m[hand[i]]++;
+        }
+        int lastvisited = -1;
+        for(auto it: m)
+        {
+            // cout<<it.first<<" "<<opened<<endl;
+            if(opened > 0 && it.first != lastvisited + 1)
+            {
+                return false;
+            }
+            if(opened >0 && it.second < opened)
+                return false;
+            q.push_back(it.second - opened);
+            opened += (it.second - opened);
+            
+            lastvisited = it.first;
+            // cout<<it.first<<" "<<opened<<endl;
+            if(q.size() == k)
+            {
+                opened -= q.front();
+                q.pop_front();
+            }
+        }
+        if(opened!=0)
+            return false;
+        return true;
+    }
+};
