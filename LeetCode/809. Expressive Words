@@ -1,0 +1,55 @@
+class Solution {
+public:
+    
+    vector<pair<char,int>> getHash(string s)
+    {
+        vector<pair<char,int>> v;
+        int n = s.length();
+        int i=0;
+        while(i<n)
+        {
+            char ch = s[i];
+            int len=0;
+            while(i<n && s[i] == ch)
+            {
+                len++;
+                i++;
+            }
+            v.push_back({ch,len});
+        }
+        return v;
+    }
+    int expressiveWords(string s, vector<string>& words) {
+        
+        vector<pair<char,int>> v = getHash(s);
+        int ans=0;
+        for(auto it :words)
+        {
+            vector<pair<char,int>> curr = getHash(it);
+            bool pos=true;
+            if(v.size() != curr.size())
+                continue;
+            for(int i=0;i<v.size();i++)
+            {
+                if(v[i].first != curr[i].first)
+                {
+                    pos=false;
+                    break;
+                }
+                if(v[i].second < curr[i].second)
+                {
+                    pos=false;
+                    break;
+                }
+                if(v[i].second <= 2 && v[i].second != curr[i].second)
+                {
+                    pos=false;
+                    break;
+                }
+            }
+            if(pos)
+                ans++;
+        }
+        return ans;
+    }
+};
