@@ -1,0 +1,60 @@
+class Solution {
+public:
+    int openLock(vector<string>& deadends, string target) {
+        set<string> s;
+        for(auto it: deadends)
+        {
+            s.insert(it);
+        }
+        set<string> visited;
+        queue<pair<string,int>> q;
+        if(s.find("0000") != s.end())
+            return -1;
+        q.push({"0000",0});
+        visited.insert("0000");
+        while(!q.empty())
+        {
+            
+            int dist = q.front().second;
+            string curr = q.front().first;
+            // cout<<curr<<" "<<dist<<endl;
+            q.pop();
+            if(curr == target)
+                return dist;
+            
+            for(int i=0;i<4;i++)
+            {
+                int dig = curr[i]-'0';
+                string temp = curr;
+                if(dig-1>=0)
+                {
+                    temp[i] = char(dig-1 + '0');
+                }
+                else
+                {
+                    temp[i] = '9';
+                }
+                if(visited.find(temp) == visited.end() && s.find(temp) == s.end())
+                {
+                    q.push({temp,dist+1});
+                    visited.insert(temp);
+                }
+                temp = curr;
+                if(dig+1<=9)
+                {
+                    temp[i] = char(dig+1+'0');
+                }
+                else
+                {
+                    temp[i] = '0';
+                }
+                if(visited.find(temp) == visited.end() && s.find(temp) == s.end())
+                {
+                    q.push({temp,dist+1});
+                    visited.insert(temp);
+                }
+            }
+        }
+        return -1;
+    }
+};
