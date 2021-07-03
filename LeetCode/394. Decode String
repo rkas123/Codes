@@ -1,0 +1,108 @@
+class Solution {
+public:
+    string decodeString(string s) {
+        stack<string> ops;
+        vector<string> postfix;
+        int n = s.length();
+        int i=0;
+        while(i<n)
+        {
+            if(isdigit(s[i]))
+            {
+                string num="";
+                while(i<n && isdigit(s[i]))
+                {
+                    num+=s[i];
+                    i++;
+                }
+                postfix.push_back(num);
+                ops.push("*");
+            }
+            else if(s[i] == '[')
+            {
+                ops.push("(");
+                i++;
+            }
+            else if(s[i] == ']')
+            {
+                while(ops.top() != "(")
+                {
+                    postfix.push_back(ops.top());
+                    ops.pop();
+                }
+                i++;
+                ops.pop();
+                if(i<n && s[i]!=']')
+                {
+                    while(!ops.empty() && (ops.top() == "+" || ops.top() == "*"))
+                    {
+                        postfix.push_back(ops.top());
+                        ops.pop();
+                    }
+                    ops.push("+");
+                }
+            }
+            else
+            {
+                string ans ="";
+                ans.push_back(s[i]);
+                postfix.push_back(ans);
+                i++;
+                if(i<n && s[i] != ']')
+                {
+                    while(!ops.empty() && (ops.top() == "+" || ops.top() == "*"))
+                    {
+                        postfix.push_back(ops.top());
+                        ops.pop();
+                    }
+                    ops.push("+");
+                }
+                    
+                
+            }
+           
+        }
+        while(!ops.empty())
+        {
+            postfix.push_back(ops.top());
+            ops.pop();
+        }
+        
+        
+        stack<string> operands;
+        for(auto it: postfix)
+        {
+            if(it == "+")
+            {
+                string second = operands.top();
+                operands.pop();
+                string first = operands.top();
+                operands.pop();
+                operands.push(first+second);
+            }
+            else if(it == "*")
+            {
+                string second = operands.top();
+                operands.pop();
+                string first = operands.top();
+                operands.pop();
+                int num = stoi(first);
+                string ans = "";
+                while(num>0)
+                {
+                    ans+=second;
+                    num--;
+                }
+                // cout<<num<<" "<<second<<" "<<ans<<endl;
+                operands.push(ans);
+            }
+            else
+            {
+                operands.push(it);
+            }
+            
+        }
+        
+        return operands.top();
+    }
+};
