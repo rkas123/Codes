@@ -1,0 +1,53 @@
+class Solution {
+public:
+    int dirX[4]={0,0,1,-1};
+    int dirY[4]={1,-1,0,0};
+    bool isValid(int x,int y,int r,int c)
+    {
+        if(x<0 || y<0 || x>=r || y>=c)
+            return false;
+        return true;
+    }
+    void dfs(int x,int y,vector<vector<int>>&dp,vector<vector<int>>& matrix)
+    {
+        // cout<<x<<" "<<y<<endl;
+        if(dp[x][y] != -1)
+            return;
+        int ans=0;
+        for(int i=0;i<4;i++)
+        {
+            int X=x+dirX[i];
+            int Y=y+dirY[i];
+            if(isValid(X,Y,dp.size(),dp[0].size()) && matrix[X][Y] < matrix[x][y])
+            {
+                dfs(X,Y,dp,matrix);
+                ans=max(ans,dp[X][Y]);
+            }
+           
+        }
+        dp[x][y] = ans+1;
+    }
+    int longestIncreasingPath(vector<vector<int>>& matrix) {
+        int r=matrix.size();
+        int c=matrix[0].size();
+        vector<vector<int>> dp(r,vector<int>(c,-1));
+        for(int i=0;i<r;i++)
+        {
+            for(int j=0;j<c;j++)
+            {
+                if(dp[i][j] != -1)
+                    continue;
+                dfs(i,j,dp,matrix);
+            }
+        }
+        int ans=0;
+        for(int i=0;i<r;i++)
+        {
+            for(int j=0;j<c;j++)
+            {
+                ans=max(ans,dp[i][j]);
+            }
+        }
+        return ans;
+    }
+};
