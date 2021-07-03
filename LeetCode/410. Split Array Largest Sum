@@ -1,0 +1,39 @@
+class Solution {
+public:
+    int getsum(vector<int> &v,int s,int e)
+    {
+        int ans = v[e];
+        if(s-1>=0)
+            ans-=v[s-1];
+        return ans;
+    }
+    int splitArray(vector<int>& nums, int m) {
+        int n = nums.size();
+        int dp[n][m];
+        for(int i=0;i<n;i++)
+        {
+            for(int j=0;j<m;j++)
+            {
+                dp[i][j] = INT_MAX;
+            }
+        }
+        for(int i=1;i<n;i++)
+        {
+            nums[i] = nums[i-1] + nums[i];
+        }
+        dp[0][0]=nums[0];
+        for(int i=1;i<n;i++)
+        {
+            dp[i][0] = getsum(nums,0,i);
+            for(int j=1;j<=i && j<m;j++)
+            {
+                for(int k=0;k<=i;k++)
+                {
+                    if(k-1>=0)
+                        dp[i][j] = min(dp[i][j],max(dp[k-1][j-1],getsum(nums,k,i)));
+                }
+            }
+        }
+        return dp[n-1][m-1];
+    }
+};
