@@ -1,0 +1,47 @@
+class Solution {
+public:
+    void color(int src,vector<int>&colors,vector<vector<int>>&adjlist)
+    {
+        vector<bool> pos(4,true);
+        for(auto it: adjlist[src])
+        {
+            if(colors[it] != -1)
+                pos[colors[it]]=false;
+        }
+        for(int i=0;i<4;i++)
+        {
+            if(pos[i])
+            {
+                colors[src]=i;
+                break;
+            }
+        }
+        for(auto it: adjlist[src])
+        {
+            if(colors[it] == -1)
+            {
+                color(it,colors,adjlist);
+            }
+        }
+    }
+    vector<int> gardenNoAdj(int n, vector<vector<int>>& paths) {
+        vector<vector<int>> adjlist(n);
+        for(auto it: paths)
+        {
+            adjlist[it[0]-1].push_back(it[1]-1);
+            adjlist[it[1]-1].push_back(it[0]-1);
+        }
+        vector<int> colors(n,-1);
+        for(int i=0;i<n;i++)
+        {
+            if(colors[i]== -1){
+                color(i,colors,adjlist);
+            }
+        }
+        for(int i=0;i<colors.size();i++)
+        {
+            colors[i]++;
+        }
+        return colors;
+    }
+};
