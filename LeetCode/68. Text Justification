@@ -1,0 +1,77 @@
+class Solution {
+public:
+    
+    string func(vector<string> &words, int s,int e,int width)
+    {
+        string ans ="";
+        int spaces = e-s;
+        if(spaces == 0)
+        {
+            ans+=words[s];
+            while(ans.length() < width)
+                ans+=" ";
+            return ans;
+        }
+        int letters=0;
+        for(int i=s;i<=e;i++)
+        {
+            letters+=words[i].length();
+        }
+        int freespaces = width - letters;
+        for(int i=s;i<=e;i++)
+        {
+            ans+=words[i];
+            if(spaces == 0)
+                break;
+            int curr= (freespaces + spaces - 1)/spaces;
+            freespaces -=curr;
+            spaces--;
+            while(curr--)
+            {
+                ans+=" ";
+            }
+            
+        }
+        return ans;
+    }
+    vector<string> fullJustify(vector<string>& words, int maxWidth) {
+        int n = words.size();
+        int i=0;
+        vector<int> counts;
+        while(i<n)
+        {
+            int curr=1;
+            int len =words[i].length();
+            i++;
+            while(i<n)
+            {
+                if(len + words[i].length() + 1 > maxWidth)
+                    break;
+                len+=(words[i].length()+1);
+                curr++;
+                i++;
+            }
+            counts.push_back(curr);
+        }
+        
+        vector<string> ans;
+        int cum=0;
+        for(int i=0;i<counts.size()-1;i++)
+        {
+            ans.push_back(func(words,cum,cum+counts[i]-1,maxWidth));
+            cum+=counts[i];
+        }
+        string curr="";
+        for(int i=cum;i<words.size();i++)
+        {
+            curr+=words[i];
+            if(curr.length() != maxWidth)
+                curr+=" ";
+        }
+        while(curr.length() < maxWidth)
+            curr+=" ";
+        ans.push_back(curr);
+        return ans;
+        
+    }
+};
