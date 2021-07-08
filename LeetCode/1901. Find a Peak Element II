@@ -1,0 +1,38 @@
+class Solution {
+public:
+    int matincol(vector<vector<int>>&mat,int col)
+    {
+        int r= mat.size();
+        int c=mat[0].size();
+        int largest = 0;
+        int index=-1;
+        for(int i=0;i<r;i++)
+        {
+            if(mat[i][col] > largest)
+            {
+                largest=mat[i][col];
+                index=i;
+            }
+        }
+        return index;
+    }
+    vector<int> findPeakGrid(vector<vector<int>>& mat) {
+        int s=0,e=mat[0].size()-1;
+        
+        while(s<e)
+        {
+            int mid=(s+e)/2;            //col
+            int index = matincol(mat,mid); //row
+            
+            if(mat[index][mid] > mat[index][mid+1])
+            {
+                e=mid;
+            }
+            else
+            {
+                s=mid+1;
+            }
+        }
+        return {matincol(mat,s),s};
+    }
+};
