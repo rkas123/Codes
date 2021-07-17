@@ -1,0 +1,54 @@
+#define F first
+#define S second
+class Solution {
+public:
+    vector<vector<int>> getSkyline(vector<vector<int>>& buildings) {
+        vector<pair<int,int>> events;
+        multiset<int> heights;
+        vector<pair<int,int>> v;
+        
+        for(auto it: buildings)
+        {
+            events.push_back({it[0],it[2]});
+            events.push_back({it[1],-1*it[2]});
+        }
+        map<int,int> tallest;
+        sort(events.begin(),events.end());
+        for(auto it: events)
+        {
+            if(it.S < 0)
+            {
+                heights.erase(heights.find(-1*it.S));
+            }
+            else
+            {
+                heights.insert(it.S);
+            }
+            if(heights.size() == 0){
+                tallest[it.F] = 0;
+            }
+            else
+            {
+                auto i = heights.end();
+                i=prev(i);
+                tallest[it.F] = *i;
+            }
+        }
+        vector<vector<int>> ans;
+        int prev = -1;
+        for(auto it: tallest)
+        {
+            if(prev == -1)
+            {
+                ans.push_back({it.F,it.S});
+                prev = it.S;
+                continue;
+            }
+            if(it.S == prev)
+                continue;
+            ans.push_back({it.F,it.S});
+            prev = it.S;
+        }
+        return ans;
+    }
+};
