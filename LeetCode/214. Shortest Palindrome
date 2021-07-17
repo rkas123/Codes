@@ -1,0 +1,38 @@
+class Solution {
+public:
+    
+    int zfunt(string s)
+    {
+        string temp = s;
+        reverse(temp.begin(),temp.end());
+        s=s+'$'+temp;
+        vector<int> z(s.length(),0);
+        z[0]=-1;
+        int l=0,r=0;
+        for(int i=1;i<s.length();i++)
+        {
+            if(i<=r)
+                z[i]=min(r-i+1,z[i-l]);
+            while(i+z[i] < s.length() && s[z[i]] == s[z[i]+i])
+                z[i]++;
+            if(i+z[i]-1 > r)
+            {
+                l=i;
+                r=i+z[i]-1;
+            }
+        }
+        int ans=0;
+        for(int i=temp.length();i<s.length();i++){
+            if(i+z[i] == s.length())
+                ans=max(ans,z[i]);
+        }
+        return ans;
+    }
+    string shortestPalindrome(string s) {
+        int prefixpal = zfunt(s);
+        int lenreq = s.length() - prefixpal;
+        string temp = s.substr(prefixpal,lenreq);
+        reverse(temp.begin(),temp.end());
+        return temp+s;
+    }
+};
