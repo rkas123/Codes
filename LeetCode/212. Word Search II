@@ -1,0 +1,106 @@
+class Node{
+    public:
+    char ch;
+    bool isTerminal;
+    string word= "";
+    vector<Node*>children;
+    Node(char ch)
+    {
+        this->children.reserve(26);
+        this->isTerminal = false;
+        this->word = "";
+        this->ch = ch;
+        for(int i=0;i<26;i++)
+        {
+            this->children[i]=NULL;
+        }
+    }
+};
+
+class trie{
+    public: 
+        Node* root;
+        trie()
+        {
+            this->root = new Node('\0');
+        }
+    
+    void insert(string s)
+    {
+        Node* curr = root;
+        for(int i=0;i<s.length();i++)
+        {
+            int index = s[i] - 'a';
+            if(curr->children[index] == NULL)
+            {
+                curr->children[index] = new Node(s[i]);
+            }
+            curr=curr->children[index];
+        }
+        curr->word = s;
+        curr->isTerminal = true;
+    }
+};
+
+int dirX[4]={0,0,1,-1};
+int dirY[4]={1,-1,0,0};
+
+bool isValid(int x,int y,int r,int c)
+{
+    if(x<0 || y<0 || x>=r || y>=c)
+        return false;
+    return true;
+}
+
+void dfs(int x,int y,set<string> &ans,Node* t,vector<vector<char>>& board,vector<vector<bool>> &vis)
+{
+    int index = board[x][y] - 'a';
+    vis[x][y]=true;
+    if(t->children[index] == NULL)
+        return;
+    
+    t=t->children[index];
+    if(t->isTerminal)
+    {
+        ans.insert(t->word);
+    }
+    for(int i=0;i<4;i++)
+    {
+        int X = x+dirX[i];
+        int Y = y+dirY[i];
+        if(isValid(X,Y,board.size(),board[0].size()) && !vis[X][Y])
+        {
+            dfs(X,Y,ans,t,board,vis);
+            vis[X][Y]=false;
+        }
+    }
+}
+
+class Solution {
+public:
+    vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {
+        trie t;
+        for(auto it: words)
+        {
+            t.insert(it);
+        }
+        set<string> ans;
+        int r=board.size();
+        int c= board[0].size();
+        
+        for(int i=0;i<r;i++)
+        {
+            for(int j=0;j<c;j++)
+            {
+                vector<vector<bool>> vis(r,vector<bool>(c,false));
+                dfs(i,j,ans,t.root,board,vis);
+            }
+        }
+        vector<string> Ans;
+        for(auto it: ans)
+        {
+            Ans.push_back(it);
+        }
+        return Ans;
+    }
+};
