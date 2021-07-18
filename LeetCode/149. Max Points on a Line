@@ -1,0 +1,43 @@
+class Solution {
+public:
+    int maxPoints(vector<vector<int>>& points) {
+        int ans = 0;
+        for(int i=0;i<points.size();i++)
+        {
+            map<pair<int,int>,int> m;
+            for(int j=0;j<points.size();j++)
+            {
+                if(i==j)
+                    continue;
+                int dx = points[j][0] - points[i][0];
+                int dy = points[j][1] - points[i][1];   
+                int gcd = __gcd(abs(dx),abs(dy));
+                dx/=gcd;
+                dy/=gcd;
+                if(dx*dy < 0)
+                {
+                    dx=-1*abs(dx);
+                    dy=abs(dy);
+                }
+                m[{dx,dy}]++;
+            }
+            int line1=0,line2=0;
+            for(auto it: m)
+            {
+                if(it.first.first == 0)
+                {
+                    line1+=it.second;
+                    continue;
+                }
+                if(it.first.second == 0)
+                {
+                    line2+=it.second;
+                    continue;
+                }
+                ans=max(ans,it.second+1);
+            }
+            ans=max(ans,max(line1+1,line2+1));
+        }
+        return ans;
+    }
+};
