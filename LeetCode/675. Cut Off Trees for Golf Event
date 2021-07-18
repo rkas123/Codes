@@ -1,0 +1,71 @@
+class Solution {
+public:
+    int dirX[4] = {0,0,1,-1};
+    int dirY[4] = {1,-1,0,0};
+    
+    bool isValid(int x,int y,int r,int c)
+    {
+        if(x<0 || y<0 || x>=r || y>=c)
+            return false;
+        return true;
+    }
+    int func(int sx,int sy,int dx,int dy,vector<vector<int>>& forest)
+    {
+        int r=forest.size();
+        int c=forest[0].size();
+        vector<vector<int>> dist(r,vector<int>(c,INT_MAX));
+        
+        dist[sx][sy] = 0;
+        queue<pair<int,int>> q;
+        q.push({sx,sy});
+        
+        while(!q.empty())
+        {
+            pair<int,int> p = q.front();
+            q.pop();
+            if(p.first == dx && p.second == dy)
+                return dist[p.first][p.second];
+            for(int i=0;i<4;i++)
+            {
+                int x=p.first + dirX[i];
+                int y=p.second + dirY[i];
+                if(isValid(x,y,r,c) && forest[x][y] >= 1 && dist[x][y] == INT_MAX)
+                {
+                    dist[x][y] = dist[p.first][p.second] + 1;
+                    q.push({x,y});
+                }
+            }
+        }
+        return -1;
+    }
+    int cutOffTree(vector<vector<int>>& forest) {
+        vector<pair<int,pair<int,int>>>indexes;
+        
+        int r=forest.size();
+        int c=forest[0].size();
+        
+        for(int i=0;i<r;i++)
+        {
+            for(int j=0;j<c;j++)
+            {
+                if(forest[i][j] > 1)
+                {
+                    indexes.push_back({forest[i][j],{i,j}});
+                }
+            }
+        }
+        sort(indexes.begin(),indexes.end());
+        int ans=0;
+        int x=0,y=0;
+        for(int i=0;i<indexes.size();i++)
+        {       
+            int dist = func(x,y,indexes[i].second.first,indexes[i].second.second,forest);
+            if(dist == -1)
+                return -1;
+            ans+=dist;
+            x=indexes[i].second.first;
+            y=indexes[i].second.second;
+        }   
+        return ans;
+    }
+};
