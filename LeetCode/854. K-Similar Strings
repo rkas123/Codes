@@ -1,0 +1,42 @@
+class Solution {
+public:
+    int kSimilarity(string s1, string s2) {
+        queue<pair<string,int>> q;
+        set<string> vis;
+        q.push({s1,0});
+        vis.insert(s1);
+        while(!q.empty())
+        {
+            pair<string,int> node = q.front();
+            q.pop();
+            int index = -1;
+            for(int i=0;i<node.first.length();i++)
+            {
+                if(s2[i] != node.first[i])
+                {
+                    index= i;
+                    break;
+                }
+            }
+            if(index == -1)
+            {
+                return node.second;
+            }
+            
+            for(int j=index+1;j<node.first.length();j++)
+            {
+                string s = node.first;
+                if(s[j] == s2[index])
+                {
+                    swap(s[j],s[index]);
+                    if(vis.find(s) == vis.end())
+                    {
+                        q.push({s,node.second+1});
+                        vis.insert(s);
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+};
