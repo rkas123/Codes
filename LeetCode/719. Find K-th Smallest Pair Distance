@@ -1,0 +1,36 @@
+class Solution {
+public:
+    bool pos(vector<int> &nums,int k,int mid)
+    {
+        int ans = 0;
+        int n = nums.size();
+        for(int i=0;i<n;i++)
+        {
+            int idx = upper_bound(nums.begin(),nums.end(),nums[i]+mid) - nums.begin();
+            ans+=(idx-i-1);
+        }
+        if(ans >= k)
+            return true;
+        return false;
+    }
+    int smallestDistancePair(vector<int>& nums, int k) {
+        sort(nums.begin(),nums.end());
+        int n = nums.size();
+        int s=0,e=nums[n-1]-nums[0];
+        int ans=0;
+        while(s<=e)
+        {
+            int mid=(s+e)/2;
+            if(pos(nums,k,mid))
+            {
+                ans = mid;
+                e=mid-1;
+            }
+            else
+            {
+                s=mid+1;
+            }
+        }
+        return ans;
+    }
+};
