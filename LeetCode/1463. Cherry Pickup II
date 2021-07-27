@@ -1,0 +1,59 @@
+class Solution {
+public:
+    int cherryPickup(vector<vector<int>>& grid) {
+        int r = grid.size();
+        int c = grid[0].size();
+        int dp[r][c][c];
+        
+        for(int i=0;i<r;i++)
+        {
+            for(int j=0;j<c;j++)
+            {
+                for(int k=0;k<c;k++)
+                    dp[i][j][k] = INT_MIN;
+            }
+        }
+        dp[0][0][c-1] = grid[0][0] + grid[0][c-1];
+        
+        
+        for(int i=1;i<r;i++)
+        {
+            for(int j=0;j<c;j++)
+            {
+                for(int k=0;k<c;k++)
+                {
+                    //j,k   --> 
+                    vector<int> pos1,pos2;
+                    for(int del=-1;del<=1;del++)
+                    {
+                        if(j+del >=0 && j+del < c)
+                        {
+                            pos1.push_back(j+del);
+                        }
+                        if(k+del >=0 && k+del < c)
+                        {
+                            pos2.push_back(k+del);
+                        }
+                    }
+                    
+                    for(auto i1: pos1)
+                    {
+                        for(auto i2:pos2)
+                        {
+                            dp[i][j][k] = max(dp[i][j][k], dp[i-1][i1][i2] + grid[i][j] + grid[i][k]);
+                        }
+                    }
+                    if(j==k)
+                        dp[i][j][k] -= grid[i][j];
+                }
+            }
+        }
+        int ans=0;
+        for(int j=0;j<c;j++)
+        {
+            for(int k=0;k<c;k++)
+                ans=max(ans,dp[r-1][j][k]);
+        }
+        return ans;
+    }
+};
