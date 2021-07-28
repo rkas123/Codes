@@ -100,6 +100,11 @@ int32_t main()
 	vector<vector<int>> A = {{1, 1}, {1, 0}};
 	vector<vector<int>> intial  = {{1}, {0}};
 	in(n);
+	if (n == 0)
+	{
+		cout << "0" << endl;
+		return 0;
+	}
 	vector<vector<int>> res = matrix_expo(A, n - 1);
 	res = matrix_mult(res, intial);
 	cout << res[0][0] << endl;
