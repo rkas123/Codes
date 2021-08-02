@@ -1,0 +1,116 @@
+#include<bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+
+#define int long long
+#define pll pair<long long,long long>
+
+#define in(x) long long x;cin>>x
+#define pb push_back
+#define F first
+#define S second
+#define endl "\n"
+
+#define test() int t;cin>>t;while(t--)
+#define KStest() int t,t1;cin>>t;t1=t;while(t--)
+#define KScout cout<<"Case #"<<t1-t<<": "
+#define deb(x) cout<<#x<<" "<<x<<endl;
+
+const long long mod = 1e9 + 7;
+const int MAX = INT_MAX;
+const long long inf = 1e18 + 5;
+const double pi = 3.14159265358979323846;
+
+int dirX[] = {1, -1, 0, 0};
+int dirY[] = {0, 0, 1, -1};
+
+using namespace std;
+void print_bool(bool zeman_modnar)
+{
+	if (zeman_modnar)
+		cout << "Yes" << endl;
+	else
+		cout << "No" << endl;
+}
+template <class T> using Tree = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//order_of_key   ==> number of elements whose value is less than the given element
+//find_by_order ==> kth element in the set (counting from 0)
+
+int32_t main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+#ifndef ONLINE_JUDGE
+	freopen("input.txt", "r", stdin);
+	freopen("output.txt", "w", stdout);
+#endif
+
+	test()
+	{
+		in(c); in(r);
+		vector<string> matrix(r);
+		for (int i = 0; i < r; i++)
+			cin >> matrix[i];
+
+		int dp[r][c][r];
+		for (int i = 0; i < r; i++)
+			for (int j = 0; j < c; j++)
+				for (int k = 0; k < r; k++)
+					dp[i][j][k] = 0;
+		for (int i = 0; i < r; i++)
+		{
+			for (int j = 0; j < c; j++)
+			{
+				for (int k = 0; k < r; k++)
+				{
+					int l = (i + j - k);
+					if (l < 0 || l >= c)
+						continue;
+
+					if (matrix[i][j] == '#' || matrix[k][l] == '#')
+					{
+						continue;
+					}
+					dp[i][j][k] = 0;
+					if (i - 1 >= 0 && k - 1 >= 0)
+					{
+						dp[i][j][k] = max(dp[i][j][k], dp[i - 1][j][k - 1]);
+					}
+					if (i - 1 >= 0 && l - 1 >= 0)
+					{
+						dp[i][j][k] = max(dp[i][j][k], dp[i - 1][j][k]);
+					}
+					if (j - 1 >= 0 && k - 1 >= 0)
+					{
+						dp[i][j][k] = max(dp[i][j][k], dp[i][j - 1][k - 1]);
+					}
+					if (j - 1 >= 0 && l - 1 >= 0)
+					{
+						dp[i][j][k] = max(dp[i][j][k], dp[i][j - 1][k]);
+					}
+					if (matrix[i][j] == '*')
+					{
+						dp[i][j][k]++;
+					}
+					if (matrix[k][l] == '*')
+						dp[i][j][k]++;
+					if (i == k && j == l && matrix[i][j] == '*')
+						dp[i][j][k]--;
+				}
+
+			}
+		}
+		// for (int i = 0; i < r; i++)
+		// 	for (int j = 0; j < c; j++)
+		// 		for (int k = 0; k < r; k++)
+		// 			for (int l = 0; l < c; l++)
+		// 				cout << i << " " << j << " " << k << " " << l << "->" << dp[i][j][k][l] << endl;
+
+
+		cout << dp[r - 1][c - 1][r - 1] << endl;
+
+	}
+
+	return 0;
+}
