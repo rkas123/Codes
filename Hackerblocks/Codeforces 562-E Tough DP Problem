@@ -1,0 +1,116 @@
+#include<bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+
+#define int long long
+#define pll pair<long long,long long>
+
+#define in(x) long long x;cin>>x
+#define pb push_back
+#define F first
+#define S second
+#define endl "\n"
+
+#define test() int t;cin>>t;while(t--)
+#define KStest() int t,t1;cin>>t;t1=t;while(t--)
+#define KScout cout<<"Case #"<<t1-t<<": "
+#define deb(x) cout<<#x<<" "<<x<<endl;
+
+const long long mod = 1e9 + 7;
+const int MAX = INT_MAX;
+const long long inf = 1e18 + 5;
+const double pi = 3.14159265358979323846;
+
+int dirX[] = {1, -1, 0, 0};
+int dirY[] = {0, 0, 1, -1};
+
+using namespace std;
+void print_bool(bool zeman_modnar)
+{
+	if (zeman_modnar)
+		cout << "Shi" << endl;
+	else
+		cout << "Fou" << endl;
+}
+template <class T> using Tree = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//order_of_key   ==> number of elements whose value is less than the given element
+//find_by_order ==> kth element in the set (counting from 0)
+
+
+vector<int> func(int n)
+{
+	vector<int> ans(20, 0);
+	int idx = 0;
+	while (n > 0)
+	{
+		ans[idx++] = (n & 1);
+		n >>= 1;
+	}
+	return ans;
+}
+
+int32_t main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+#ifndef ONLINE_JUDGE
+	freopen("input.txt", "r", stdin);
+	freopen("output.txt", "w", stdout);
+#endif
+
+	in(n); in(q);
+	vector<int> v(n);
+	for (int i = 0; i < n; i++)
+		cin >> v[i];
+
+	vector<vector<int>> dp(n, vector<int>(20, inf));
+
+	vector<int> nearest(20, inf);
+
+	for (int i = n - 1; i >= 0; i--)
+	{
+		vector<int> bit_array = func(v[i]);
+
+		for (int j = 0; j < 20; j++)
+		{
+			if (bit_array[j] == 1) {
+				int temp = nearest[j];
+				nearest[j] = i;
+				dp[i][j] = i;
+				if (temp != inf)
+				{
+					for (int k = 0; k < 20; k++)
+					{
+						dp[i][k] = min(dp[i][k], dp[temp][k]);
+					}
+				}
+			}
+		}
+
+	}
+
+	while (q--)
+	{
+		in(x); in(y);
+		x--; y--;
+		vector<int> bit_array = func(v[y]);
+		bool flag = false;
+		for (int j = 0; j < 20; j++)
+		{
+			if (bit_array[j] == 1)
+			{
+				if (dp[x][j] <= y)
+				{
+					flag = true;
+					break;
+				}
+			}
+		}
+
+		
+		print_bool(flag);
+	}
+
+	return 0;
+}
