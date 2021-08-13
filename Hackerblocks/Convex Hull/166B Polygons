@@ -1,0 +1,136 @@
+#include<bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+
+#define int long long
+#define pll pair<long long,long long>
+
+#define in(x) long long x;cin>>x
+#define pb push_back
+#define F first
+#define S second
+#define endl "\n"
+
+#define test() int t;cin>>t;while(t--)
+#define KStest() int t,t1;cin>>t;t1=t;while(t--)
+#define KScout cout<<"Case #"<<t1-t<<": "
+#define deb(x) cout<<#x<<" "<<x<<endl;
+
+const long long mod = 1e9 + 7;
+const int MAX = INT_MAX;
+const long long inf = 1e18 + 5;
+const double pi = 3.14159265358979323846;
+
+int dirX[] = {1, -1, 0, 0};
+int dirY[] = {0, 0, 1, -1};
+
+using namespace std;
+void print_bool(bool zeman_modnar)
+{
+	if (zeman_modnar)
+		cout << "YES" << endl;
+	else
+		cout << "NO" << endl;
+}
+template <class T> using Tree = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//order_of_key   ==> number of elements whose value is less than the given element
+//find_by_order ==> kth element in the set (counting from 0)
+int crossProduct(vector<int> vect_A, vector<int> vect_B)       		//return the cross product of two vectors
+{
+	vector<int> cross_P(3, 0);
+	cross_P[0] = vect_A[1] * vect_B[2] - vect_A[2] * vect_B[1];
+	cross_P[1] = vect_A[2] * vect_B[0] - vect_A[0] * vect_B[2];
+	cross_P[2] = vect_A[0] * vect_B[1] - vect_A[1] * vect_B[0];
+	return cross_P[2];												//we only need the sign of z coordinate
+}
+
+vector<pair<int, int>> convex_hull(vector<pair<int, int>> &points)	//returns vector of points of convex hull
+{
+	int n = points.size();
+	sort(points.begin(), points.end());
+	vector<pll> upper_half, bottom_half;
+
+	upper_half.pb(points[0]);
+	bottom_half.pb(points[0]);
+
+
+	for (int i = 1; i < n; i++)
+	{
+		int cp = crossProduct({points[n - 1].F - points[0].F, points[n - 1].S - points[0].S, 0}, {points[i].F - points[0].F, points[i].S - points[0].S, 0});
+		if (cp > 0 || i == n - 1)
+		{
+			while (upper_half.size() >= 2)
+			{
+				if (crossProduct({upper_half[upper_half.size() - 1].F - upper_half[upper_half.size() - 2].F, upper_half[upper_half.size() - 1].S - upper_half[upper_half.size() - 2].S, 0}, {points[i].F - upper_half[upper_half.size() - 1].F, points[i].S - upper_half[upper_half.size() - 1].S, 0}) <= 0)
+					break;
+				upper_half.pop_back();
+			}
+			upper_half.pb(points[i]);
+		}
+		if (cp < 0 || i == n - 1)
+		{
+			while (bottom_half.size() >= 2)
+			{
+				if (crossProduct({bottom_half[bottom_half.size() - 1].F - bottom_half[bottom_half.size() - 2].F, bottom_half[bottom_half.size() - 1].S - bottom_half[bottom_half.size() - 2].S, 0}, {points[i].F - bottom_half[bottom_half.size() - 1].F, points[i].S - bottom_half[bottom_half.size() - 1].S, 0}) >= 0)
+					break;
+				bottom_half.pop_back();
+			}
+			bottom_half.pb(points[i]);
+		}
+	}
+	vector<pll> convex_hull_points;
+	for (auto it : upper_half) {
+		convex_hull_points.pb(it);
+	}
+	for (auto it : bottom_half) {
+		convex_hull_points.pb(it);
+	}
+
+	sort(convex_hull_points.begin(), convex_hull_points.end());
+
+	convex_hull_points.resize(unique(convex_hull_points.begin(), convex_hull_points.end()) - convex_hull_points.begin());	//removves duplicates
+	return convex_hull_points;
+}
+int32_t main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+#ifndef ONLINE_JUDGE
+	freopen("input.txt", "r", stdin);
+	freopen("output.txt", "w", stdout);
+#endif
+
+	in(n);
+	set<pair<int, int>> bpoints;
+	vector<pair<int, int>> a(n);
+	for (int i = 0; i < n; i++)
+		cin >> a[i].F >> a[i].S;
+	in(m);
+	vector<pair<int, int>> b(m);
+	for (int i = 0; i < m; i++) {
+		cin >> b[i].F >> b[i].S;
+		bpoints.insert({b[i]});
+	}
+	for (auto it : a)
+		b.pb(it);
+
+	sort(b.begin(), b.end());
+	b.resize(unique(b.begin(), b.end()) - b.begin());
+	vector<pll> ch = convex_hull(b);
+	sort(a.begin(), a.end());
+	bool flag = true;
+
+	for (auto it : ch)
+	{
+		if (bpoints.find(it) != bpoints.end())
+		{
+			flag = false;
+			break;
+		}
+	}
+
+	print_bool(flag);
+
+	return 0;
+}
