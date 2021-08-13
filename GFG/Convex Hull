@@ -1,0 +1,78 @@
+#define F first
+#define S second
+#define pb push_back
+#define ll long long
+class Solution {
+public:
+ll crossProduct(vector<ll> vect_A, vector<ll> vect_B)
+{
+	vector<ll> cross_P(3, 0);
+	cross_P[0] = vect_A[1] * vect_B[2] - vect_A[2] * vect_B[1];
+	cross_P[1] = vect_A[2] * vect_B[0] - vect_A[0] * vect_B[2];
+	cross_P[2] = vect_A[0] * vect_B[1] - vect_A[1] * vect_B[0];
+	return cross_P[2];
+}
+
+
+ll dist(vector<ll> a,vector<ll> b)
+{
+    return abs(a[0] - b[0]) + abs(a[1] - b[1]);
+}
+
+vector<vector<int>>FindConvexHull(vector<vector<int>>points_list){
+    vector<pair<int,int>> points;
+    int n = points_list.size();
+    if(n<=2)
+    {
+        return {{-1}};
+    }
+    for(auto it: points_list)
+    {
+        points.push_back({it[0],it[1]});
+    }
+    // Code here
+    sort(points.begin(), points.end());
+	vector<pair<int,int>> upper_half, bottom_half;
+
+	upper_half.push_back(points[0]);
+	bottom_half.push_back(points[0]);
+
+
+	for (int i = 1; i < n; i++)
+	{
+		ll cp = crossProduct({points[n - 1].F - points[0].F, points[n - 1].S - points[0].S, 0}, {points[i].F - points[0].F, points[i].S - points[0].S, 0});
+		if (cp > 0 || i == n - 1)
+		{
+			while (upper_half.size() >= 2)
+			{
+				if (crossProduct({upper_half[upper_half.size() - 1].F - upper_half[upper_half.size() - 2].F, upper_half[upper_half.size() - 1].S - upper_half[upper_half.size() - 2].S, 0}, {points[i].F - upper_half[upper_half.size() - 1].F, points[i].S - upper_half[upper_half.size() - 1].S, 0}) < 0)
+					break;
+				upper_half.pop_back();
+			}
+			upper_half.pb(points[i]);
+		}
+		if (cp < 0 || i == n - 1)
+		{
+			while (bottom_half.size() >= 2)
+			{
+				if (crossProduct({bottom_half[bottom_half.size() - 1].F - bottom_half[bottom_half.size() - 2].F, bottom_half[bottom_half.size() - 1].S - bottom_half[bottom_half.size() - 2].S, 0}, {points[i].F - bottom_half[bottom_half.size() - 1].F, points[i].S - bottom_half[bottom_half.size() - 1].S, 0}) > 0)
+					break;
+				bottom_half.pop_back();
+			}
+			bottom_half.pb(points[i]);
+		}
+	}
+	vector<vector<int>> convex_hull_points;
+	for (auto it : upper_half) {
+		convex_hull_points.pb({it.F,it.S});
+	}
+	for (auto it : bottom_half) {
+		convex_hull_points.pb({it.F,it.S});
+	}
+
+	sort(convex_hull_points.begin(), convex_hull_points.end());
+
+	convex_hull_points.resize(unique(convex_hull_points.begin(), convex_hull_points.end()) - convex_hull_points.begin());
+    return convex_hull_points;
+    
+}
