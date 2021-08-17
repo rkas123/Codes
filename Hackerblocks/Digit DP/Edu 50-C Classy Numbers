@@ -1,0 +1,116 @@
+#include<bits/stdc++.h>
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
+
+#define int long long
+#define pll pair<long long,long long>
+
+#define in(x) long long x;cin>>x
+#define pb push_back
+#define F first
+#define S second
+#define endl "\n"
+
+#define test() int t;cin>>t;while(t--)
+#define KStest() int t,t1;cin>>t;t1=t;while(t--)
+#define KScout cout<<"Case #"<<t1-t<<": "
+#define deb(x) cout<<#x<<" "<<x<<endl;
+
+const long long mod = 1e9 + 7;
+const int MAX = INT_MAX;
+const long long inf = 1e18 + 5;
+const double pi = 3.14159265358979323846;
+
+int dirX[] = {1, -1, 0, 0};
+int dirY[] = {0, 0, 1, -1};
+
+using namespace std;
+void print_bool(bool zeman_modnar)
+{
+	if (zeman_modnar)
+		cout << "YES" << endl;
+	else
+		cout << "NO" << endl;
+}
+// template <class T> using Tree = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//order_of_key   ==> number of elements whose value is less than the given element
+//find_by_order ==> kth element in the set (counting from 0)
+int func(string s)
+{
+	int n = s.length();
+	int dp[n][4][2];
+	memset(dp, 0, sizeof(dp));
+
+	if (s[0] == '0')
+	{
+		dp[0][0][1] = 1;
+	}
+	else
+	{
+		dp[0][0][0] = 1;
+		dp[0][1][0] = s[0] - '1';
+		dp[0][1][1] = 1;
+	}
+
+	for (int i = 0; i < n - 1; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			dp[i + 1][j][0] += dp[i][j][0];		//no tight, adding 0
+			if (j + 1 <= 3)
+				dp[i + 1][j + 1][0] += (dp[i][j][0] * 9); //no tight,adding 1...9
+
+			if (s[i + 1] == '0')
+			{
+				dp[i + 1][j][1] += dp[i][j][1];		//tight with next as 0
+			}
+			else
+			{
+				dp[i + 1][j][0] += dp[i][j][1];		//tight and adding 0
+				if (j + 1 <= 3) {							//tight and adding lesser number
+					dp[i + 1][j + 1][0] += (dp[i][j][1] * (s[i + 1] - '1'));
+					dp[i + 1][j + 1][1] += dp[i][j][1]; //tight and adding tight
+				}
+			}
+		}
+	}
+
+
+
+	int ans = 0;
+	{
+		for (int j = 0; j < 4; j++)
+			ans += (dp[n - 1][j][0] + dp[n - 1][j][1]);
+	}
+	return ans;
+
+}
+int32_t main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+#ifndef ONLINE_JUDGE
+	freopen("input.txt", "r", stdin);
+	freopen("output.txt", "w", stdout);
+#endif
+
+	test()
+	{
+		in(l); in(r);
+		string L = to_string(l - 1);
+		string R = to_string(r);
+		while (L.length() <= 18)
+		{
+			L = "0" + L;
+		}
+		while (R.length() < 18)
+		{
+			R = "0" + R;
+		}
+		int ans = func(R) - func(L);
+		cout << ans << endl;
+	}
+
+	return 0;
+}
