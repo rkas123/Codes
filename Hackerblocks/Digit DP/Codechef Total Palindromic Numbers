@@ -1,0 +1,94 @@
+#include<bits/stdc++.h>
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
+
+#define int long long
+#define pll pair<long long,long long>
+
+#define in(x) long long x;cin>>x
+#define pb push_back
+#define F first
+#define S second
+#define endl "\n"
+
+#define test() int t;cin>>t;while(t--)
+#define KStest() int t,t1;cin>>t;t1=t;while(t--)
+#define KScout cout<<"Case #"<<t1-t<<": "
+#define deb(x) cout<<#x<<" "<<x<<endl;
+
+const long long mod = 1e9 + 7;
+const int MAX = INT_MAX;
+const long long inf = 1e18 + 5;
+const double pi = 3.14159265358979323846;
+
+int dirX[] = {1, -1, 0, 0};
+int dirY[] = {0, 0, 1, -1};
+
+using namespace std;
+void print_bool(bool zeman_modnar)
+{
+	if (zeman_modnar)
+		cout << "YES" << endl;
+	else
+		cout << "NO" << endl;
+}
+// template <class T> using Tree = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//order_of_key   ==> number of elements whose value is less than the given element
+//find_by_order ==> kth element in the set (counting from 0)
+int dp[20][11][11][2][2][2][2];
+string s;
+int solve(int pos, int las, int slas, bool tight, bool even, bool odd, bool st)
+{
+	if (pos == s.length())
+	{
+		if (even && odd)
+			return 1;
+		return 0;
+	}
+	if (dp[pos][las][slas][tight][even][odd][st] != -1)
+		return dp[pos][las][slas][tight][even][odd][st];
+
+	int en = (tight) ? s[pos] - '0' : 9;
+	int res = 0;
+	if (st == 0)
+	{
+		res += solve(pos + 1, las, slas, tight & (en == 0), even, odd, st);
+		for (int i = 1; i <= en; i++)
+		{
+			res += solve(pos + 1, i, las, tight & (i == en), even | (i == las), odd | (i == slas), st | (i != 0));
+		}
+	}
+	else
+	{
+		for (int i = 0; i <= en; i++)
+		{
+			res += solve(pos + 1, i, las, tight & (i == en), even | (i == las), odd | (i == slas), st | (i != 0));
+		}
+	}
+	return dp[pos][las][slas][tight][even][odd][st] = res;
+}
+int eval(string a)
+{
+	s = a;
+	memset(dp, -1, sizeof dp);
+	solve(0, 10, 10, 1, 0, 0, 0);
+}
+int32_t main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+#ifndef ONLINE_JUDGE
+	freopen("input.txt", "r", stdin);
+	freopen("output.txt", "w", stdout);
+#endif
+
+	test()
+	{
+		string a, b;
+		cin >> a >> b;
+		int ans = eval(b) - eval(a);
+		cout << ans << endl;
+	}
+	return 0;
+}
