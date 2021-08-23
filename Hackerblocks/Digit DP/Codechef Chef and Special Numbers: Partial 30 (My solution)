@@ -1,0 +1,185 @@
+#include<bits/stdc++.h>
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
+
+#define int long long
+#define pll pair<long long,long long>
+
+#define in(x) long long x;cin>>x
+#define pb push_back
+#define F first
+#define S second
+#define endl "\n"
+
+#define test() int t;cin>>t;while(t--)
+#define KStest() int t,t1;cin>>t;t1=t;while(t--)
+#define KScout cout<<"Case #"<<t1-t<<": "
+#define deb(x) cout<<#x<<" "<<x<<endl;
+
+const long long mod = 1e9 + 7;
+const int MAX = INT_MAX;
+const long long inf = 1e18 + 5;
+const double pi = 3.14159265358979323846;
+
+int dirX[] = {1, -1, 0, 0};
+int dirY[] = {0, 0, 1, -1};
+
+using namespace std;
+void print_bool(bool zeman_modnar)
+{
+	if (zeman_modnar)
+		cout << "YES" << endl;
+	else
+		cout << "NO" << endl;
+}
+// template <class T> using Tree = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//order_of_key   ==> number of elements whose value is less than the given element
+//find_by_order ==> kth element in the set (counting from 0)
+
+string s;
+int k;
+
+int dp[19][9][8][7][5][512][2];
+
+int solve(int pos, int mod9, int mod8, int mod7, int mod5, int mask, int tight)
+{
+	if (pos == s.length())
+	{
+		if (mask == 0)
+			return dp[pos][mod9][mod8][mod7][mod5][mask][tight] = 0;
+
+		vector<bool> v(10, false);
+		int ans = 0;
+		v[1] = true;
+		if (mod8 == 0)
+		{
+			v[8] = true; v[4] = true; v[2] = true;
+		}
+		else if (mod8 == 4)
+		{
+			v[4] = true; v[2] = true;
+		}
+		else if (mod8 % 2 == 0)
+		{
+			v[2] = true;
+		}
+
+		if (mod9 == 0)
+		{
+			v[9] = true;
+			v[3] = true;
+		}
+		if (mod9 % 3 == 0)
+		{
+			v[3] = true;
+		}
+
+		if (mod7 == 0)
+		{
+			v[7] = true;
+		}
+
+		if (mod5 == 0)
+		{
+			v[5] = true;
+		}
+
+		if (v[3] && v[2])
+			v[6] = true;
+
+		int i = 1;
+		while (mask > 0)
+		{
+			if (mask & 1)
+			{
+				ans += (v[i] ? 1 : 0);
+			}
+			i++;
+			mask >>= 1;
+		}
+		if (ans >= k)
+		{
+			return dp[pos][mod9][mod8][mod7][mod5][mask][tight] = 1;
+		}
+		return dp[pos][mod9][mod8][mod7][mod5][mask][tight] = 0;
+	}
+
+	if (dp[pos][mod9][mod8][mod7][mod5][mask][tight] != -1)
+		return dp[pos][mod9][mod8][mod7][mod5][mask][tight];
+
+	int up = (tight == 1) ? s[pos] - '0' : 9;
+	int res = 0;
+	for (int i = 0; i <= up; i++)
+	{
+		if (i != 0)
+			res += solve(pos + 1, (mod9 * 10 + i) % 9, (mod8 * 10 + i) % 8, (mod7 * 10 + i) % 7, (mod5 * 10 + i) % 5, mask | (1 << (i - 1)), tight & (i == up));
+		else {
+			res += solve(pos + 1, (mod9 * 10 + i) % 9, (mod8 * 10 + i) % 8, (mod7 * 10 + i) % 7, (mod5 * 10 + i) % 5, mask, tight & (i == up));
+
+		}
+	}
+
+	return dp[pos][mod9][mod8][mod7][mod5][mask][tight] = res;
+}
+int Stol(string s)
+{
+	int ans = 0;
+	for (int i = 0; i < s.length(); i++)
+	{
+		ans *= 10;
+		ans += (s[i] - '0');
+	}
+	return ans;
+}
+int check(string s)
+{
+	int n = Stol(s);
+
+	vector<bool> v(10, false);
+
+	for (int i = 0; i < s.length(); i++)
+	{
+		int num = s[i] - '0';
+
+		if (num != 0 && n % num == 0)
+			v[num] = true;
+	}
+
+	int ans = 0 ;
+	for (int i = 1; i < 10; i++)
+	{
+		if (v[i])
+			ans++;
+	}
+	return (ans >= k) ? 1 : 0;
+}
+int eval(string a)
+{
+	s = a;
+	memset(dp, -1, sizeof dp);
+	return solve(0, 0, 0, 0, 0, 0, 1);
+}
+
+int32_t main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+#ifndef ONLINE_JUDGE
+	freopen("input.txt", "r", stdin);
+	freopen("output.txt", "w", stdout);
+#endif
+
+	test()
+	{
+		string l, r;
+		cin >> l >> r;
+		cin >> k;
+		// cout << eval(r) << endl;
+		// cout << eval(l) << endl;
+		int ans = eval(r) - eval(l) + check(l);
+		cout << ans << endl;
+	}
+
+	return 0;
+}
