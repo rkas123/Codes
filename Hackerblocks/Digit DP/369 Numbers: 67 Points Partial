@@ -1,0 +1,122 @@
+#include<bits/stdc++.h>
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
+
+#define int long long
+#define pll pair<long long,long long>
+
+#define in(x) long long x;cin>>x
+#define pb push_back
+#define F first
+#define S second
+#define endl "\n"
+
+#define test() int t;cin>>t;while(t--)
+#define KStest() int t,t1;cin>>t;t1=t;while(t--)
+#define KScout cout<<"Case #"<<t1-t<<": "
+#define deb(x) cout<<#x<<" "<<x<<endl;
+
+const long long mod = 1e9 + 7;
+const int MAX = INT_MAX;
+const long long inf = 1e18 + 5;
+const double pi = 3.14159265358979323846;
+
+int dirX[] = {1, -1, 0, 0};
+int dirY[] = {0, 0, 1, -1};
+
+using namespace std;
+void print_bool(bool zeman_modnar)
+{
+	if (zeman_modnar)
+		cout << "YES" << endl;
+	else
+		cout << "NO" << endl;
+}
+// template <class T> using Tree = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//order_of_key   ==> number of elements whose value is less than the given element
+//find_by_order ==> kth element in the set (counting from 0)
+string s;
+int dp[50][17][17][17][2];
+
+int solve(int pos, int three, int six, int nine, int tight)
+{
+	if (three > 16 || six > 16 || nine > 16)
+		return 0;
+
+	if (dp[pos][three][six][nine][tight] != -1)
+		return dp[pos][three][six][nine][tight];
+
+	if (pos == s.length())
+	{
+		if (three == six && six == nine && three != 0)
+		{
+			return dp[pos][three][six][nine][tight] = 1;
+		}
+		return dp[pos][three][six][nine][tight] = 0;
+	}
+
+	int res = 0;
+	int up = tight ? s[pos] - '0' : 9;
+
+	for (int i = 0; i <= up; i++)
+	{
+		if (i == 3)
+		{
+			res += solve(pos + 1, three + 1, six , nine , tight & (i == up));
+		}
+		else if (i == 6)
+		{
+			res += solve(pos + 1, three , six + 1, nine , tight & (i == up));
+		}
+		else if (i == 9)
+		{
+			res += solve(pos + 1, three , six, nine + 1, tight & (i == up));
+		}
+		else
+			res += solve(pos + 1, three , six , nine , tight & (i == up));
+		res %= mod;
+	}
+	return dp[pos][three][six][nine][tight] = res;
+}
+
+int eval(string a)
+{
+	s = a;
+	memset(dp, -1, sizeof dp);
+
+	return solve(0, 0, 0, 0, 1);
+}
+
+int check(string a)
+{
+	vector<int> count(10, 0);
+
+	for (int i = 0; i < a.length(); i++)
+	{
+		count[a[i] - '0']++;
+	}
+
+	if (count[3] == count[6] && count[6] == count[9] && count[3] != 0)
+		return 1;
+	return 0;
+}
+
+int32_t main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+#ifndef ONLINE_JUDGE
+	freopen("input.txt", "r", stdin);
+	freopen("output.txt", "w", stdout);
+#endif
+
+	test()
+	{
+		string l, r;
+		cin >> l >> r;
+		cout << (eval(r) - eval(l) + check(l) + mod) % mod << endl;
+	}
+
+	return 0;
+}
