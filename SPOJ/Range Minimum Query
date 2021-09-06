@@ -1,0 +1,131 @@
+#include<bits/stdc++.h>
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
+
+#define int long long
+#define pll pair<long long,long long>
+
+#define in(x) long long x;cin>>x
+#define pb push_back
+#define F first
+#define S second
+#define endl "\n"
+
+#define test() int t;cin>>t;while(t--)
+#define KStest() int t,t1;cin>>t;t1=t;while(t--)
+#define KScout cout<<"Case #"<<t1-t<<": "
+#define deb(x) cout<<#x<<" "<<x<<endl;
+
+const long long mod = 1e9 + 7;
+const int MAX = INT_MAX;
+const long long inf = 1e18 + 5;
+const double pi = 3.14159265358979323846;
+
+int dirX[] = {1, -1, 0, 0};
+int dirY[] = {0, 0, 1, -1};
+
+using namespace std;
+void print_bool(bool zeman_modnar)
+{
+	if (zeman_modnar)
+		cout << "YES" << endl;
+	else
+		cout << "NO" << endl;
+}
+// template <class T> using Tree = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//order_of_key   ==> number of elements whose value is less than the given element
+//find_by_order ==> kth element in the set (counting from 0)
+
+
+struct SparseTable {
+	vector<vector<int>> table;
+	vector<int> logvalues;
+	vector<int> v;
+	int n;
+	int maxLog;
+	SparseTable(vector<int>&a)
+	{
+		v = a;
+		this->n = a.size();
+		table.resize(n);
+		logvalues.resize(n + 1);
+		maxLog = log2(n);
+		logvalues[1] = 0;
+		for (int i = 2; i <= n; i++)
+		{
+			logvalues[i] = logvalues[i / 2] + 1;
+		}
+		for (int i = 0; i < n; i++)
+		{
+			table[i].resize(maxLog + 1);
+			for (int j = 0; j <= maxLog; j++)
+				table[i][j] = 0; // 0 is the identity element
+		}
+		build();
+	}
+	void build()
+	{
+		for (int i = 0; i < n; i++)
+		{
+			table[i][0] =  v[i];
+		}
+		for (int i = 1; i <= maxLog; i++)
+		{
+			for (int j = 0; (j + (1 << i)) <= n ; j++)
+			{
+				table[j][i] = merge(table[j][i - 1], table[j + (1 << (i - 1))][i - 1]);
+			}
+		}
+	}
+	int non_overlap(int left, int right)    	//dont use, instead use seg-tree
+	{
+		int ans = 0;						//identity answer. for sum = 0 etc.
+		for (int j = logvalues[right - left + 1]; j >= 0; j--)
+		{
+			if ((1 << j) <= right - left + 1)
+			{
+				ans = merge(ans, table[left][j]);
+			}
+			left += (1 << j);
+		}
+		return ans;
+	}
+	int overlap(int left, int right)			//O(1), min,max,gcd
+	{
+		int j = logvalues[right - left + 1];
+		int ans = merge(table[left][j], table[right - (1 << j) + 1][j]);
+		return ans;
+	}
+
+	int merge(int a, int b)
+	{
+		return min(a, b); //change this to min/max/gcd
+	}
+};
+
+
+
+
+int32_t main()
+{
+// 	ios_base::sync_with_stdio(false);
+// 	cin.tie(NULL);
+// #ifndef ONLINE_JUDGE
+// 	freopen("input.txt", "r", stdin);
+// 	freopen("output.txt", "w", stdout);
+// #endif
+
+	in(n);
+	vector<int> v(n);
+	for (int i = 0; i < n; i++)
+		cin >> v[i];
+	SparseTable table(v);
+	test()
+	{
+		in(l); in(r);
+		cout << table.overlap(l, r) << endl;
+	}
+
+	return 0;
+}
