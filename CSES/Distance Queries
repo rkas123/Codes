@@ -1,0 +1,216 @@
+#include<bits/stdc++.h>
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
+
+#define int long long
+#define pll pair<long long,long long>
+
+#define in(x) long long x;cin>>x
+#define pb push_back
+#define F first
+#define S second
+#define endl "\n"
+
+#define test() int t;cin>>t;while(t--)
+#define KStest() int t,t1;cin>>t;t1=t;while(t--)
+#define KScout cout<<"Case #"<<t1-t<<": "
+#define deb(x) cout<<#x<<" "<<x<<endl;
+
+const long long mod = 1e9 + 7;
+const int MAX = INT_MAX;
+const long long inf = 1e18 + 5;
+const double pi = 3.14159265358979323846;
+
+int dirX[] = {1, -1, 0, 0};
+int dirY[] = {0, 0, 1, -1};
+
+using namespace std;
+void print_bool(bool zeman_modnar)
+{
+	if (zeman_modnar)
+		cout << "YES" << endl;
+	else
+		cout << "NO" << endl;
+}
+// template <class T> using Tree = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//order_of_key   ==> number of elements whose value is less than the given element
+//find_by_order ==> kth element in the set (counting from 0)
+vector<int> dfstree;
+vector<int> height_dfstree;
+int height = 0;
+int Index[200005];
+struct Segment_Tree {
+	vector<int> segtree;
+	Segment_Tree(int n) {
+		segtree = vector<int>(4 * n);
+	}
+	Segment_Tree(vector<int> &a) {
+		int n = a.size();
+		segtree = vector<int>(4 * n, -1);
+		build(a, 0, n - 1, 1);
+	}
+
+	int f(int a, int b) {
+		if (a == -1  && b == -1)
+			return -1;
+		if (a == -1)
+			return b;
+		if (b == -1)
+			return a;
+		// cout << a << " " << height_dfstree[a] << " " << b << " " << height_dfstree[b] << endl;
+		if (height_dfstree[a] < height_dfstree[b])
+			return a;
+		return b;
+	}
+
+	void build(vector<int> &a, int s, int e, int root) {
+		// base case
+		if (s == e) {
+			segtree[root] = a[s];
+			return;
+		}
+
+		int mid = (s + e) / 2;
+		build(a, s, mid, 2 * root);
+		build(a, mid + 1, e, 2 * root + 1);
+
+		// self work
+		segtree[root] = f(segtree[2 * root], segtree[2 * root + 1]);
+	}
+
+	void point_update(vector<int> &a, int s, int e, int root, int idx, int val) {
+		// base case
+		if (s == e) {
+			segtree[root] = val;
+			a[idx] = val;
+			return;
+		}
+
+		int mid = (s + e) / 2;
+		if (mid >= idx) {
+			point_update(a, s, mid, 2 * root, idx, val);
+		}
+		else {
+			point_update(a, mid + 1, e, 2 * root + 1, idx, val);
+		}
+
+		// self work
+		segtree[root] = f(segtree[2 * root], segtree[2 * root + 1]);
+	}
+
+	void point_update(int a[], int s, int e, int root, int idx, int val) {
+		// base case
+		if (s == e) {
+			segtree[root] = val;
+			a[idx] = val;
+			return;
+		}
+
+		int mid = (s + e) / 2;
+		if (mid >= idx) {
+			point_update(a, s, mid, 2 * root, idx, val);
+		}
+		else {
+			point_update(a, mid + 1, e, 2 * root + 1, idx, val);
+		}
+
+		// self work
+		segtree[root] = f(segtree[2 * root], segtree[2 * root + 1]);
+	}
+
+	int query(int s, int e, int root, int l, int r) {  //query with root Index set to 1
+		// completely out of range
+		if (s > r || e < l) {
+			return -1;
+		}
+		// completely in range
+		if (s >= l && e <= r) {
+			return segtree[root];
+		}
+		// partial overlap
+		int mid = (s + e) / 2;
+		int x = query(s, mid, 2 * root, l, r);
+		int y = query(mid + 1, e, 2 * root + 1, l, r);
+		return f(x, y);
+	}
+};
+
+
+void dfs(int src, vector<vector<int>> &adjlist, vector<bool>&vis)
+{
+	vis[src] = true;
+	dfstree.pb(src);
+	height_dfstree.pb(height);
+	Index[src] = dfstree.size() - 1;
+	for (auto it : adjlist[src])
+	{
+		if (vis[it])
+			continue;
+		height++;
+		dfs(it, adjlist, vis);
+		height--;
+		height_dfstree.pb(height);
+		dfstree.pb(src);
+	}
+}
+
+void dfs1(int src, vector<vector<int>>&adjlist, vector<bool>&vis, vector<int>&dist)
+{
+	vis[src] = true;
+	for (auto it : adjlist[src])
+	{
+		if (!vis[it])
+		{
+			dist[it] = dist[src] + 1;
+			dfs1(it, adjlist, vis, dist);
+		}
+	}
+}
+int32_t main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+#ifndef ONLINE_JUDGE
+	freopen("input.txt", "r", stdin);
+	freopen("output.txt", "w", stdout);
+#endif
+
+	in(n); in(q);
+	vector<vector<int>>adjlist(n + 1);
+	for (int i = 1; i < n; i++)
+	{
+		in(u); in(v);
+		adjlist[u].pb(v);
+		adjlist[v].pb(u);
+	}
+	vector<bool> vis(n + 1, false);
+	dfs(1, adjlist, vis);
+	vector<int> v(dfstree.size());
+	for (int i = 0; i < dfstree.size(); i++)
+		v[i] = i ;
+
+	Segment_Tree segtree(v);
+
+	vector<int> dist(n + 1);
+
+	dist[1] = 0;
+	for (int i = 0; i <= n; i++)
+		vis[i] = false;
+	dfs1(1, adjlist, vis, dist);
+
+
+	while (q--)
+	{
+		in(a); in(b);
+		int l = Index[a];
+		int r = Index[b];
+		if (l > r)
+			swap(l, r);
+		int lca = dfstree[segtree.query(0, dfstree.size() - 1, 1, l, r)];
+		int ans = dist[a] - dist[lca] + dist[b] - dist[lca];
+		cout << ans << endl;
+	}
+
+	return 0;
+}
