@@ -1,0 +1,148 @@
+#include<bits/stdc++.h>
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
+
+#define int long long
+#define pll pair<long long,long long>
+
+#define in(x) long long x;cin>>x
+#define pb push_back
+#define F first
+#define S second
+#define endl "\n"
+
+#define test() int t;cin>>t;while(t--)
+#define KStest() int t,t1;cin>>t;t1=t;while(t--)
+#define KScout cout<<"Case #"<<t1-t<<": "
+#define deb(x) cout<<#x<<" "<<x<<endl;
+
+const long long mod = 1e9 + 7;
+const int MAX = INT_MAX;
+const long long inf = 1e18 + 5;
+const double pi = 3.14159265358979323846;
+
+int dirX[] = {1, -1, 0, 0};
+int dirY[] = {0, 0, 1, -1};
+
+using namespace std;
+void print_bool(bool zeman_modnar)
+{
+	if (zeman_modnar)
+		cout << "YES" << endl;
+	else
+		cout << "NO" << endl;
+}
+// template <class T> using Tree = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//order_of_key   ==> number of elements whose value is less than the given element
+//find_by_order ==> kth element in the set (counting from 0)
+vector<int> adjlist[100005];
+int dp[100005][2];
+int color[100005];
+int fastexp(int a, int b)
+{
+	int ans = 1;
+	int temp = a;
+	while (b > 0)
+	{
+		if (b & 1)
+			ans = (ans * temp) % mod;
+		temp = (temp * temp) % mod;
+		b >>= 1;
+	}
+	return ans;
+}
+int mod_inv(int x)
+{
+	return fastexp(x, mod - 2);
+}
+
+void dfs(int src, int par)
+{
+	for (auto it : adjlist[src])
+	{
+		if (it != par)
+			dfs(it, src);
+	}
+
+	if (color[src] == 1)
+	{
+		dp[src][0] = 0;
+		int ways = 1;
+
+		for (auto it : adjlist[src])
+		{
+			if (it != par)
+			{
+				int curr = 0;
+				curr += dp[it][0];
+				curr += dp[it][1];
+				curr %= mod;
+				ways *= curr;
+				ways %= mod;
+			}
+		}
+		dp[src][1] = ways;
+	}
+	else
+	{
+		int zero = 1;
+		for (auto it : adjlist[src])
+		{
+			if (it != par)
+			{
+				int curr = dp[it][0];
+				curr += dp[it][1];
+				curr %= mod;
+				zero *= curr;
+				zero %= mod;
+			}
+		}
+
+		dp[src][0] = zero;
+		int one = 0;
+		for (auto it : adjlist[src])
+		{
+			if (it != par)
+			{
+				if (dp[it][1] != 0)
+				{
+					int contri = zero * mod_inv((dp[it][0] + dp[it][1]) % mod);
+					contri %= mod;
+					one += (contri * dp[it][1]) % mod;
+					one %= mod;
+				}
+			}
+		}
+		dp[src][1] = one;
+	}
+}
+
+int32_t main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+#ifndef ONLINE_JUDGE
+	freopen("input.txt", "r", stdin);
+	freopen("output.txt", "w", stdout);
+#endif
+
+	in(n);
+	memset(dp, 0, sizeof dp);
+	for (int i = 0; i < n - 1; i++) {
+		in(t);
+		adjlist[t].pb(i + 1);
+		adjlist[i + 1].pb(t);
+	}
+	for (int i = 0; i < n; i++)
+		cin >> color[i];
+
+	dfs(0, -1);
+	// for (int i = 0; i < n; i++)
+	// {
+	// 	cout << i << "->" << dp[i][0] << " " << dp[i][1] << endl;
+	// }
+	cout << dp[0][1] << endl;
+
+	return 0;
+}
