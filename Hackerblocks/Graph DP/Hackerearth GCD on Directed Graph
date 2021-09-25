@@ -1,0 +1,180 @@
+#include<bits/stdc++.h>
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
+
+#define int long long
+#define pll pair<long long,long long>
+
+#define in(x) long long x;cin>>x
+#define pb push_back
+#define F first
+#define S second
+#define endl "\n"
+
+#define test() int t;cin>>t;while(t--)
+#define KStest() int t,t1;cin>>t;t1=t;while(t--)
+#define KScout cout<<"Case #"<<t1-t<<": "
+#define deb(x) cout<<#x<<" "<<x<<endl;
+#define setbits __builtin_popcountll
+
+const long long mod = 1e9 + 7;
+const int MAX = INT_MAX;
+const long long inf = LLONG_MAX;
+const double pi = 3.14159265358979323846;
+
+int dirX[] = {1, -1, 0, 0};
+int dirY[] = {0, 0, 1, -1};
+
+using namespace std;
+void print_bool(bool zeman_modnar)
+{
+	if (zeman_modnar)
+		cout << "YES" << endl;
+	else
+		cout << "NO" << endl;
+}
+// template <class T> using Tree = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//order_of_key   ==> number of elements whose value is less than the given element
+//find_by_order ==> kth element in the set (counting from 0)
+
+int n;
+vector<int> adjlist[100005];
+vector<int> rev[100005];
+int c[100005];
+set<int> dp[100005];
+vector<int> topo;
+stack<int> s;
+int nodes[100005];
+int newc[100005];
+
+void topsort(int src, vector<bool>&vis)
+{
+	vis[src] = true;
+	for (auto it : adjlist[src])
+	{
+		if (!vis[it])
+			topsort(it, vis);
+	}
+	topo.pb(src);
+}
+
+void dfs(int src, vector<bool>&vis)
+{
+	vis[src] = true;
+	for (auto it : adjlist[src])
+	{
+		if (!vis[it])
+		{
+			dfs(it, vis);
+		}
+	}
+	s.push(src);
+}
+
+void dfs1(int src, vector<bool>&vis, int nn)
+{
+	vis[src] = true;
+	nodes[src] = nn;
+	newc[nn] = __gcd(newc[nn], c[src]);
+	for (auto it : rev[src])
+	{
+		if (!vis[it])
+		{
+			dfs1(it, vis, nn);
+		}
+	}
+}
+int32_t main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+#ifndef ONLINE_JUDGE
+	freopen("input.txt", "r", stdin);
+	freopen("output.txt", "w", stdout);
+#endif
+	cin >> n;
+	in(m);
+	for (int i = 1; i <= n; i++)
+	{
+		cin >> c[i];
+	}
+
+	vector<pll> edges;
+	for (int i = 0; i < m; i++)
+	{
+		in(u); in(v);
+		edges.pb({u, v});
+		adjlist[u].pb(v);
+		rev[v].pb(u);
+	}
+	vector<bool> vis(n + 1, false);
+
+	for (int i = 1; i <= n; i++)
+	{
+		if (!vis[i])
+		{
+			dfs(i, vis);
+		}
+	}
+
+
+
+	for (int i = 1; i <= n; i++)
+	{
+		adjlist[i].clear();
+		vis[i] = false;
+	}
+
+	int newnode = 1;
+	while (!s.empty())
+	{
+		int node = s.top();
+		s.pop();
+		if (vis[node])
+			continue;
+		newc[newnode] = c[node];
+		dfs1(node, vis, newnode);
+		newnode++;
+	}
+
+	for (auto it : edges)
+	{
+		if (nodes[it.F] != nodes[it.S])
+			adjlist[nodes[it.F]].pb(nodes[it.S]);
+	}
+
+	for (int i = 0; i <= n; i++)
+		vis[i] = false;
+
+
+	for (int i = 1; i < newnode; i++)
+	{
+		if (!vis[i])
+			topsort(i, vis);
+	}
+
+	int ans = inf;
+
+	for (auto it : topo)
+	{
+		if (adjlist[it].size() == 0)
+		{
+			ans = min(ans, newc[it]);
+			dp[it].insert(newc[it]);
+			continue;
+		}
+		for (auto node : adjlist[it])
+		{
+			for (auto gcds : dp[node])
+			{
+				dp[it].insert(__gcd(newc[it], gcds));
+				ans = min(ans, __gcd(newc[it], gcds));
+			}
+		}
+	}
+
+	cout << ans << endl;
+
+	return 0;
+}
