@@ -1,0 +1,158 @@
+#include<bits/stdc++.h>
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
+
+#define int long long
+#define pll pair<long long,long long>
+
+#define in(x) long long x;cin>>x
+#define pb push_back
+#define F first
+#define S second
+#define endl "\n"
+
+#define test() int t;cin>>t;while(t--)
+#define KStest() int t,t1;cin>>t;t1=t;while(t--)
+#define KScout cout<<"Case #"<<t1-t<<": "
+#define deb(x) cout<<#x<<" "<<x<<endl;
+#define setbits __builtin_popcountll
+
+const long long mod = 1e9 + 7;
+const int MAX = INT_MAX;
+const long long inf = LLONG_MAX;
+const double pi = 3.14159265358979323846;
+
+int dirX[] = {1, -1, 0, 0};
+int dirY[] = {0, 0, 1, -1};
+
+using namespace std;
+void print_bool(bool zeman_modnar)
+{
+	if (zeman_modnar)
+		cout << "YES" << endl;
+	else
+		cout << "NO" << endl;
+}
+// template <class T> using Tree = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//order_of_key   ==> number of elements whose value is less than the given element
+//find_by_order ==> kth element in the set (counting from 0)
+
+struct node {
+	int pre, suff, sum, ans;
+	node()
+	{
+		pre = suff = sum = ans = 0;
+	}
+	node(int v)
+	{
+		pre = suff = sum = ans = v;
+	}
+	node (int pre, int suff, int sum, int ans)
+	{
+		this->pre = pre;
+		this->suff = suff;
+		this-> sum = sum;
+		this->ans = ans;
+	}
+};
+
+struct Segment_Tree {
+	vector<node> segtree;
+	Segment_Tree(int n) {
+		segtree = vector<node>(4 * n, 0);
+	}
+	Segment_Tree(vector<int> &a) {
+		int n = a.size();
+		segtree = vector<node>(4 * n);
+
+		build(a, 0, n - 1, 1);
+	}
+
+	node f(node a, node b) {
+		//Just change this for a different segment tree
+		int prefix = max(a.pre, a.sum + b.pre);
+		int suffix = max(b.suff, a.suff + b.sum);
+		int sum = a.sum + b.sum;
+		int ans = max(a.suff + b.pre, max(a.ans, b.ans));
+		return node(prefix, suffix, sum, ans);
+	}
+
+	void build(vector<int> &a, int s, int e, int root) {
+		// base case
+		if (s == e) {
+			segtree[root] = node(a[s]);
+			return;
+		}
+
+		int mid = (s + e) / 2;
+		build(a, s, mid, 2 * root);
+		build(a, mid + 1, e, 2 * root + 1);
+
+		// self work
+		segtree[root] = f(segtree[2 * root], segtree[2 * root + 1]);
+	}
+
+	void point_update(int s, int e, int root, int idx, int val) {
+		// base case
+		if (s == e) {
+			segtree[root] = node(val);
+			return;
+		}
+
+		int mid = (s + e) / 2;
+		if (mid >= idx) {
+			point_update(s, mid, 2 * root, idx, val);
+		}
+		else {
+			point_update(mid + 1, e, 2 * root + 1, idx, val);
+		}
+
+		// self work
+		segtree[root] = f(segtree[2 * root], segtree[2 * root + 1]);
+	}
+
+	int query(int s, int e, int root, int l, int r) {  //query with root index set to 1
+		// completely out of range
+		if (s > r || e < l) {
+			return 0;
+		}
+		// completely in range
+		if (s >= l && e <= r) {
+			return segtree[root].ans;
+		}
+		// partial overlap
+		int mid = (s + e) / 2;
+		int x = query(s, mid, 2 * root, l, r);
+		int y = query(mid + 1, e, 2 * root + 1, l, r);
+		return f(x, y).ans;
+	}
+};
+
+
+int32_t main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+#ifndef ONLINE_JUDGE
+	freopen("input.txt", "r", stdin);
+	freopen("output.txt", "w", stdout);
+#endif
+
+	in(n); in(q);
+	vector<int> v(n);
+	for (int i = 0; i < n; i++)
+	{
+		cin >> v[i];
+	}
+	Segment_Tree segtree(v);
+
+	for (int i = 0; i < q; i++)
+	{
+		in(idx); in(val);
+		idx--;
+		segtree.point_update(0, n - 1, 1, idx, val);
+		cout << max(0ll, segtree.segtree[1].ans) << endl;
+	}
+	return 0;
+}
