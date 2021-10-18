@@ -1,0 +1,170 @@
+#include<bits/stdc++.h>
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
+
+#define int long long
+#define pll pair<long long,long long>
+
+#define in(x) long long x;cin>>x
+#define pb push_back
+#define F first
+#define S second
+#define endl "\n"
+
+#define test() int t;cin>>t;while(t--)
+#define KStest() int t,t1;cin>>t;t1=t;while(t--)
+#define KScout cout<<"Case #"<<t1-t<<": "
+#define deb(x) cout<<#x<<" "<<x<<endl;
+#define setbits __builtin_popcountll
+
+const long long mod = 1e9 + 7;
+const int MAX = INT_MAX;
+const long long inf = LLONG_MAX;
+const double pi = 3.14159265358979323846;
+
+int dirX[] = {1, -1, 0, 0};
+int dirY[] = {0, 0, 1, -1};
+
+using namespace std;
+void print_bool(bool zeman_modnar)
+{
+	if (zeman_modnar)
+		cout << "YES" << endl;
+	else
+		cout << "NO" << endl;
+}
+// template <class T> using Tree = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//order_of_key   ==> number of elements whose value is less than the given element
+//find_by_order ==> kth element in the set (counting from 0)
+
+
+struct BIT {
+	vector<vector<int>> tree;
+	int n;
+
+	BIT(int n)
+	{
+		this->n = n;
+		tree = vector<vector<int>>(n, vector<int>(n, 0));
+	}
+
+	int queryy(int x, int y)
+	{
+		int ans = 0;
+		while (y > 0)
+		{
+			ans += tree[x][y];
+			y -= (y & (-y));
+		}
+		return ans;
+	}
+
+	int query(int x, int y)
+	{
+		int ans = 0;
+		while (x > 0)
+		{
+			ans += queryy(x, y);
+			x -= (x & (-x));
+		}
+		return ans;
+	}
+
+	int updatey(int x, int y, int val)
+	{
+		while (y < n)
+		{
+			tree[x][y] += val;
+			y += (y & (-y));
+		}
+	}
+
+	int update(int x, int y, int val)
+	{
+		while (x < n)
+		{
+			updatey(x, y, val);
+			x += (x & (-x));
+		}
+	}
+
+	int Query(int x, int y)
+	{
+		if (x < 0 || y < 0 || x >= n || y >= n)
+			return 0;
+		return query(x, y);
+	}
+};
+
+
+int32_t main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+#ifndef ONLINE_JUDGE
+	freopen("input.txt", "r", stdin);
+	freopen("output.txt", "w", stdout);
+#endif
+
+	in(n); in(q);
+
+	vector<string> s(n);
+	for (int i = 0; i < n; i++)
+		cin >> s[i];
+
+
+	vector<vector<int>> v(n + 1, vector<int>(n + 1, 0));
+
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			if (s[i][j] == '.')
+				v[i + 1][j + 1] = 0;
+			else
+				v[i + 1][j + 1] = 1;
+		}
+	}
+
+	BIT tree(n + 1);
+
+	for (int i = 1; i <= n; i++)
+	{
+		for (int j = 1; j <= n; j++)
+		{
+			if (v[i][j] == 1)
+			{
+				tree.update(i , j , 1);
+			}
+		}
+	}
+
+	while (q--)
+	{
+		in(t);
+		if (t == 1)
+		{
+			in(x);
+			in(y);
+			if (v[x][y] == 0)
+			{
+				tree.update(x, y, 1);
+				v[x][y] = 1;
+			}
+			else
+			{
+				tree.update(x, y, -1);
+				v[x][y] = 0;
+			}
+		}
+		else
+		{
+			in(x1); in(y1); in(x2); in(y2);
+			int ans = tree.Query(x2, y2) + tree.Query(x1 - 1, y1 - 1) - tree.Query(x1 - 1, y2) - tree.Query(x2, y1 - 1);
+			cout << ans << endl;
+		}
+	}
+
+	return 0;
+}
