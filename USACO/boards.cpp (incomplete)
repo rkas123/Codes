@@ -1,0 +1,189 @@
+/*
+ID: rkrupes1
+TASK: boards
+LANG: C++
+*/
+#include<bits/stdc++.h>
+
+#define int long long
+#define pll pair<long long,long long>
+
+#define in(x) long long x;cin>>x
+#define pb push_back
+#define F first
+#define S second
+#define endl "\n"
+
+#define test() int t;cin>>t;while(t--)
+#define KStest() int t,t1;cin>>t;t1=t;while(t--)
+#define KScout cout<<"Case #"<<t1-t<<": "
+#define deb(x) cout<<#x<<" "<<x<<endl;
+
+const long long mod = 1e9 + 7;
+const int MAX = INT_MAX;
+const long long inf = 1e18 + 5;
+const double pi = 3.14159265358979323846;
+
+int dirX[] = {1, -1, 0, 0};
+int dirY[] = {0, 0, 1, -1};
+
+// #define cin fin
+// #define cout fout
+using namespace std;
+
+
+struct Data {
+	int num;
+	Data()
+	{
+		num = inf;
+	}
+	Data(int n)
+	{
+		num = n;
+	}
+};
+
+Data min(Data a, Data b)
+{
+	if (a.num < b.num)
+		return a;
+	return b;
+}
+
+struct Segment_Tree {
+	vector<Data> segtree;
+	// vector<int> lazy;
+	Segment_Tree(int n) {
+		segtree.resize(4 * n);
+	}
+
+	Data f(Data a, Data b) {
+		//Just change this for a different segment tree
+		return min(a, b);
+	}
+
+	void build(vector<int> &a, int s, int e, int root) {
+		// base case
+		if (s == e) {
+			segtree[root] = Data(a[s]);
+			return;
+		}
+
+		int mid = (s + e) / 2;
+		build(a, s, mid, 2 * root);
+		build(a, mid + 1, e, 2 * root + 1);
+
+		// self work
+		segtree[root] = f(segtree[2 * root], segtree[2 * root + 1]);
+	}
+
+	void point_update(int s, int e, int root, int idx, int val) {
+		// base case
+		if (s == e) {
+			segtree[root] = min(segtree[root], Data(val));
+			return;
+		}
+
+		int mid = (s + e) / 2;
+		if (mid >= idx) {
+			point_update(s, mid, 2 * root, idx, val);
+		}
+		else {
+			point_update(mid + 1, e, 2 * root + 1, idx, val);
+		}
+
+		// self work
+		segtree[root] = f(segtree[2 * root], segtree[2 * root + 1]);
+	}
+
+	Data query(int s, int e, int root, int l, int r) {  //query with root index set to 1
+		// completely out of range
+		//propagate(root,s,e);
+		if (s > r || e < l) {
+			return Data(inf);
+		}
+
+		// completely in range
+		if (s >= l && e <= r) {
+			return segtree[root];
+		}
+		// partial overlap
+		int mid = (s + e) / 2;
+		Data x = query(s, mid, 2 * root, l, r);
+		Data y = query(mid + 1, e, 2 * root + 1, l, r);
+		return f(x, y);
+	}
+};
+
+
+int32_t main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+#ifndef ONLINE_JUDGE
+	freopen("input.txt", "r", stdin);
+	freopen("output.txt", "w", stdout);
+#endif
+	// ofstream fout ("boards.out");
+	// ifstream fin ("boards.in");
+
+	in(n); in(m);
+
+	set<int> yindexes;
+	vector<vector<int>> board(m, vector<int>(4));
+
+	for (int i = 0; i < m; i++)
+	{
+		for (int j = 0; j < 4; j++)
+			cin >> board[i][j];
+
+		yindexes.insert(board[i][1]);
+		yindexes.insert(board[i][3]);
+	}
+
+	map<int, int> mapping, revmap;
+
+	int curr = 0;
+	for (auto it : yindexes)
+	{
+		revmap[curr] = it;
+		mapping[it] = curr;
+		curr++;
+	}
+
+	for (int i = 0; i < m; i++)
+	{
+		board[i][1] = mapping[board[i][1]];
+		board[i][3] = mapping[board[i][3]];
+	}
+
+
+	sort(board.begin(), board.end());
+
+
+	Segment_Tree segtree(curr + 1);
+
+	segtree.point_update(0, curr, 1, 0, 0);
+
+	int limit = curr;
+	int ans = n + n;
+	for (auto it : board)
+	{
+		pll start = {it[0], it[1]};
+		pll end = {it[2], it[3]};
+
+		int pos = segtree.query(0, limit, 1, 0, start.S).num;
+
+		int curr = pos + it[0] + revmap[it[1]];
+		ans = min(ans, curr + n - end.F + n - revmap[end.S]);
+
+		int endans = curr - end.F - revmap[end.S];
+
+		segtree.point_update(0, limit, 1, it[3], endans);
+	}
+
+	cout << ans << endl;
+
+	return 0;
+}
