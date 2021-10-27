@@ -1,0 +1,136 @@
+#include<bits/stdc++.h>
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
+
+#define int long long
+#define pll pair<long long,long long>
+
+#define in(x) long long x;cin>>x
+#define pb push_back
+#define F first
+#define S second
+#define endl "\n"
+
+#define test() int t;cin>>t;while(t--)
+#define KStest() int t,t1;cin>>t;t1=t;while(t--)
+#define KScout cout<<"Case #"<<t1-t<<": "
+#define deb(x) cout<<#x<<" "<<x<<endl;
+#define setbits __builtin_popcountll
+
+const long long mod = 1e9 + 7;
+const int MAX = INT_MAX;
+const long long inf = LLONG_MAX;
+const double pi = 3.14159265358979323846;
+
+int dirX[] = {1, -1, 0, 0};
+int dirY[] = {0, 0, 1, -1};
+
+using namespace std;
+void print_bool(bool zeman_modnar)
+{
+	if (zeman_modnar)
+		cout << "YES" << endl;
+	else
+		cout << "NO" << endl;
+}
+// template <class T> using Tree = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//order_of_key   ==> number of elements whose value is less than the given element
+//find_by_order ==> kth element in the set (counting from 0)
+
+struct Vertex {
+	Vertex *l, *r;
+	int sum;
+
+	Vertex(int sum)
+	{
+		this->sum = sum;
+		l = NULL;
+		r = NULL;
+	}
+	Vertex(Vertex *l, Vertex* r)
+	{
+		this-> sum = 0;
+		if (l)
+			this->sum += l->sum;
+		if (r)
+			this->sum += r->sum;
+
+		this->l = l;
+		this->r = r;
+	}
+};
+
+Vertex* build(vector<int>&v, int l, int r)
+{
+	if (l == r)
+		return new Vertex(v[l]);
+
+	int mid = (l + r) / 2;
+
+	return new Vertex(build(v, l, mid), build(v, mid + 1, r));
+}
+
+Vertex* update(Vertex* v, int l, int r, int ind, int pos)
+{
+	if (l == r)
+	{
+		return new Vertex(pos + v->sum);
+	}
+
+	int mid = (l + r) / 2;
+
+	if (ind <= mid)
+		return new Vertex(update(v->l, l, mid, ind, pos), v->r);
+	return new Vertex(v->l, update(v->r, mid + 1, r, ind, pos));
+}
+
+int query(Vertex *v, int s, int e, int l, int r)
+{
+	if (s > r || e < l)
+		return 0;
+	if (s >= l && e <= r)
+		return v->sum;
+
+	int mid = (s + e) / 2;
+
+	return query(v->l, s, mid, l, r) + query(v->r, mid + 1, e, l, r);
+}
+
+int32_t main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+#ifndef ONLINE_JUDGE
+	freopen("input.txt", "r", stdin);
+	freopen("output.txt", "w", stdout);
+#endif
+
+
+	in(n);
+	vector<int> v(n);
+	for (int i = 0; i < n; i++)
+		cin >> v[i];
+	vector<Vertex*> versions;
+	versions.pb(build(v, 0, n - 1));
+
+	in(q);
+
+	while (q--)
+	{
+		in(a);
+		if (a == 1)
+		{
+			in(idx); in(ind); in(add);
+			ind--;
+			versions.pb(update(versions[idx], 0, n - 1, ind, add));
+		}
+		else
+		{
+			in(idx); in(l); in(r);
+			l--; r--;
+			cout << query(versions[idx], 0, n - 1, l, r) << endl;
+		}
+	}
+	return 0;
+}
