@@ -1,0 +1,167 @@
+#include<bits/stdc++.h>
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
+
+#define int long long
+#define pll pair<long long,long long>
+
+#define in(x) long long x;cin>>x
+#define pb push_back
+#define F first
+#define S second
+#define endl "\n"
+
+#define test() int t;cin>>t;while(t--)
+#define KStest() int t,t1;cin>>t;t1=t;while(t--)
+#define KScout cout<<"Case #"<<t1-t<<": "
+#define deb(x) cout<<#x<<" "<<x<<endl;
+#define setbits __builtin_popcountll
+
+const long long mod = 1e9 + 7;
+const int MAX = INT_MAX;
+const long long inf = LLONG_MAX;
+const double pi = 3.14159265358979323846;
+
+int dirX[] = {1, -1, 0, 0};
+int dirY[] = {0, 0, 1, -1};
+
+using namespace std;
+void print_bool(bool zeman_modnar)
+{
+	if (zeman_modnar)
+		cout << "YES" << endl;
+	else
+		cout << "NO" << endl;
+}
+// template <class T> using Tree = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//order_of_key   ==> number of elements whose value is less than the given element
+//find_by_order ==> kth element in the set (counting from 0)
+
+
+
+struct Data {
+	int num;
+	Data()
+	{
+		num = 0;
+	}
+	Data(int n)
+	{
+		num = n;
+	}
+};
+
+
+struct Segment_Tree {
+	vector<Data> segtree;
+	vector<int> lazy;
+	Segment_Tree(int n) {
+		segtree = vector<Data>(4 * n);
+		lazy = vector<int> (4 * n, 0);
+	}
+
+	void propagate(int root, int s, int e)
+	{
+		if (lazy[root] != 0)
+		{
+			//make updates on the current node
+			int currwidth = e - s + 1;
+			segtree[root].num += (currwidth * lazy[root]);
+
+			if (s != e)
+			{
+				lazy[2 * root] += lazy[root];
+				lazy[2 * root + 1] += lazy[root];
+			}
+			lazy[root] = 0;
+		}
+	}
+
+	Data f(Data a, Data b) {
+		//Just change this for a different segment tree
+		return Data(a.num + b.num);
+	}
+
+	void rupd(int s, int e, int root, int l, int r, int val)
+	{
+		propagate(root, s, e);
+
+		if (s > r || e < l)
+			return;
+
+		if (s >= l && e <= r)
+		{
+			//make updates in the current node
+			int currwidth = (e - s + 1);
+			segtree[root].num += (currwidth * val);
+
+			if (s != e) //lazy updates
+			{
+				lazy[2 * root] += val;
+				lazy[2 * root + 1] += val;
+			}
+			return;
+		}
+
+		int mid = (s + e) / 2;
+
+		rupd(s, mid, 2 * root, l, r, val);
+		rupd(mid + 1, e, 2 * root + 1, l, r, val);
+		segtree[root] = f(segtree[2 * root], segtree[2 * root + 1]);
+	}
+
+	Data query(int s, int e, int root, int l, int r) {  //query with root index set to 1
+		// completely out of range
+		propagate(root, s, e);
+		if (s > r || e < l) {
+			return 0;
+		}
+		// completely in range
+		if (s >= l && e <= r) {
+			return segtree[root];
+		}
+		// partial overlap
+		int mid = (s + e) / 2;
+		Data x = query(s, mid, 2 * root, l, r);
+		Data y = query(mid + 1, e, 2 * root + 1, l, r);
+		return f(x, y);
+	}
+};
+
+
+
+int32_t main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+#ifndef ONLINE_JUDGE
+	freopen("input.txt", "r", stdin);
+	freopen("output.txt", "w", stdout);
+#endif
+
+	test()
+	{
+		in(n);
+		in(q);
+		Segment_Tree segtree(n);
+
+		while (q--)
+		{
+			in(t);
+			if (t == 0)
+			{
+				in(l); in(r); in(val);
+				l--; r--;
+				segtree.rupd(0, n - 1, 1, l, r, val);
+			}
+			else
+			{
+				in(l); in(r);
+				l--; r--;
+				cout << segtree.query(0, n - 1, 1, l, r).num << endl;
+			}
+		}
+	}
+	return 0;
+}
