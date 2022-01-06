@@ -1,0 +1,226 @@
+#include<bits/stdc++.h>
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
+
+#define int long long
+#define pll pair<long long,long long>
+#define vvi vector<vector<int>>
+
+#define in(x) long long x;cin>>x
+#define pb push_back
+#define F first
+#define S second
+#define endl "\n"
+
+#define test() int t;cin>>t;while(t--)
+#define KStest() int t,t1;cin>>t;t1=t;while(t--)
+#define KScout cout<<"Case #"<<t1-t<<": "
+#define deb(x) cout<<#x<<" "<<x<<endl;
+#define setbits __builtin_popcountll
+
+const long long mod = 1e9 + 7;
+const int MAX = INT_MAX;
+const long long inf = LLONG_MAX;
+const double pi = 3.14159265358979323846;
+
+int dirX[] = {1, -1, 0, 0};
+int dirY[] = {0, 0, 1, -1};
+
+using namespace std;
+void print_bool(bool zeman_modnar)
+{
+	if (zeman_modnar)
+		cout << "YES" << endl;
+	else
+		cout << "NO" << endl;
+}
+// template <class T> using Tree = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//order_of_key   ==> number of elements whose value is less than the given element
+//find_by_order ==> kth element in the set (counting from 0)
+
+
+
+
+struct Segment_Tree {
+	vector<int> segtree;
+	Segment_Tree(int n) {
+		segtree = vector<int>(4 * n, 0);
+	}
+	Segment_Tree(vector<int> &a) {
+		int n = a.size();
+		segtree = vector<int>(4 * n);
+		build(a, 0, n - 1, 1);
+	}
+
+	int f(int a, int b) {
+		//Just change this for a different segment tree
+		return max(a, b);
+	}
+
+	void build(vector<int> &a, int s, int e, int root) {
+		// base case
+		if (s == e) {
+			segtree[root] = a[s];
+			return;
+		}
+
+		int mid = (s + e) / 2;
+		build(a, s, mid, 2 * root);
+		build(a, mid + 1, e, 2 * root + 1);
+
+		// self work
+		segtree[root] = f(segtree[2 * root], segtree[2 * root + 1]);
+	}
+
+	void point_update(int s, int e, int root, int idx, int val) {
+		// base case
+		if (s == e) {
+			segtree[root] = val;
+			return;
+		}
+
+		int mid = (s + e) / 2;
+		if (mid >= idx) {
+			point_update(s, mid, 2 * root, idx, val);
+		}
+		else {
+			point_update(mid + 1, e, 2 * root + 1, idx, val);
+		}
+
+		// self work
+		segtree[root] = f(segtree[2 * root], segtree[2 * root + 1]);
+	}
+
+	int query(int s, int e, int root, int l, int r) {  //query with root index set to 1
+		// completely out of range
+		if (s > r || e < l) {
+			return -1;
+		}
+		// completely in range
+		if (s >= l && e <= r) {
+			return segtree[root];
+		}
+		// partial overlap
+		int mid = (s + e) / 2;
+		int x = query(s, mid, 2 * root, l, r);
+		int y = query(mid + 1, e, 2 * root + 1, l, r);
+		return f(x, y);
+	}
+};
+
+int dfs(int src, int par, vvi&adjlist, vector<int>&parent, vector<int>&bigchild, vector<int>&depth)
+{
+	if (par == -1)
+		depth[src] = 0;
+	else
+		depth[src] = depth[par] + 1;
+	parent[src] = par;
+	int big = -1;
+	int cnt = 1;
+	for (auto it : adjlist[src])
+	{
+		if (it != par)
+		{
+			int sz = dfs(it, src, adjlist, parent, bigchild, depth);
+			cnt += sz;
+			if (sz > big)
+			{
+				big = sz;
+				bigchild[src] = it;
+			}
+		}
+	}
+	return cnt;
+}
+
+void dfs1(int src, int par, vvi&adjlist, vector<int>&top, vector<int>&v, vector<int>&bigchild, int t)
+{
+	top[src] = t;
+	v.pb(src);
+	if (bigchild[src] != -1)
+		dfs1(bigchild[src], src, adjlist, top, v, bigchild, t);
+
+	for (auto it : adjlist[src])
+	{
+		if (it != par && it != bigchild[src])
+		{
+			dfs1(it, src, adjlist, top, v, bigchild, it);
+		}
+	}
+}
+
+int32_t main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+#ifndef ONLINE_JUDGE
+	freopen("input.txt", "r", stdin);
+	freopen("output.txt", "w", stdout);
+#endif
+	in(n); in(q);
+
+	vector<int> val(n + 1);
+	for (int i = 1; i <= n; i++) cin >> val[i];
+
+	vvi  adjlist(n + 1);
+
+	for (int i = 1; i < n; i++)
+	{
+		in(a); in(b);
+		adjlist[a].pb(b);
+		adjlist[b].pb(a);
+	}
+
+	vector<int> bigchild(n + 1, -1), top(n + 1), parent(n + 1), depth(n + 1, -1);
+	dfs(1, -1, adjlist, parent, bigchild, depth);
+	vector<int> v, pos(n + 1);
+	dfs1(1, -1, adjlist, top, v, bigchild, 1);
+
+	for (int i = 0; i < n; i++)
+		pos[v[i]] = i;
+	for (int i = 0; i < n; i++)
+		v[i] = val[v[i]];
+
+	Segment_Tree segtree(v);
+
+	while (q--)
+	{
+		in(t);
+		if (t == 1)
+		{
+			in(node); in(newval);
+			segtree.point_update(0, n - 1, 1, pos[node], newval);
+		}
+		else
+		{
+
+			in(u); in(v);
+			int ans = -1;
+			while (1)
+			{
+				int pu = top[u];
+				int pv = top[v];
+				if (pu == pv)
+				{
+					int l = pos[u], r = pos[v];
+					ans = max(ans, segtree.query(0, n - 1, 1, min(l, r), max(l, r)));
+					break;
+				}
+				if (depth[pu] > depth[pv])
+				{
+					ans = max(ans, segtree.query(0, n - 1, 1, pos[pu], pos[u]));
+					u = parent[pu];
+				}
+				else
+				{
+					ans = max(ans, segtree.query(0, n - 1, 1, pos[pv], pos[v]));
+					v = parent[pv];
+				}
+			}
+			cout << ans << " ";
+		}
+	}
+
+	return 0;
+}
