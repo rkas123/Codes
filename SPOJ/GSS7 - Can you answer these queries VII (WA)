@@ -1,0 +1,481 @@
+#include<bits/stdc++.h>
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
+
+#define int long long
+#define pll pair<long long,long long>
+#define vvi vector<vector<int>>
+
+#define in(x) long long x;cin>>x
+#define pb push_back
+#define F first
+#define S second
+#define endl "\n"
+
+#define test() int t;cin>>t;while(t--)
+#define KStest() int t,t1;cin>>t;t1=t;while(t--)
+#define KScout cout<<"Case #"<<t1-t<<": "
+#define deb(x) cout<<#x<<" "<<x<<endl;
+#define setbits __builtin_popcountll
+
+const long long mod = 1e9 + 7;
+const int MAX = INT_MAX;
+const long long inf = 1e18;
+const double pi = 3.14159265358979323846;
+
+int dirX[] = {1, -1, 0, 0};
+int dirY[] = {0, 0, 1, -1};
+
+using namespace std;
+void print_bool(bool zeman_modnar)
+{
+	if (zeman_modnar)
+		cout << "YES" << endl;
+	else
+		cout << "NO" << endl;
+}
+// template <class T> using Tree = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//order_of_key   ==> number of elements whose value is less than the given element
+//find_by_order ==> kth element in the set (counting from 0)
+
+
+struct Data {
+	int ans, l, r, sum;
+	Data()
+	{
+		ans = 0; l = 0; r = 0; sum = 0;
+	}
+	Data(int n)
+	{
+		ans = max(n, 0ll);
+		sum = n;
+		l = max(0ll, n);
+		r = max(0ll, n);
+	}
+	Data(int ans, int l, int r, int sum)
+	{
+		this->ans = ans;
+		this->l = l;
+		this->r = r;
+		this->sum = r;
+	}
+
+};
+
+
+struct Segment_Tree {
+	vector<Data> segtree;
+	vector<int> lazy;
+	vector<bool> lazy2;
+
+	Segment_Tree(vector<int> &a) {
+		int n = a.size();
+		segtree = vector<Data>(4 * n);
+		lazy = vector<int>(4 * n, 0);
+		lazy2 = vector<bool>(4 * n, false);
+		build(a, 0, n - 1, 1);
+	}
+
+
+	void propagate(int root, int s, int e)
+	{
+		if (lazy2[root])
+		{
+			//make updates on the current node
+			int width = e - s + 1;
+			segtree[root].sum = (width * lazy[root]);
+			segtree[root].ans = max(width * lazy[root], lazy[root]);
+			segtree[root].ans = max(segtree[root].ans, 0ll);
+			segtree[root].l = max(width * lazy[root], 0ll);
+			segtree[root].r = max(width * lazy[root], 0ll);
+			if (s != e)
+			{
+				lazy[2 * root] = lazy[root];
+				lazy[2 * root + 1] = lazy[root];
+
+				lazy2[2 * root] = true;
+				lazy2[2 * root + 1] = true;
+			}
+			lazy2[root] = false;
+			lazy[root] = 0;
+		}
+	}
+
+	Data f(Data a, Data b) {
+		//Just change this for a different segment tree
+		int sum = a.sum + b.sum;
+		int ans = max(a.ans, b.ans);
+		ans = max(a.r + b.l, ans);
+		ans = max(ans, 0ll);
+		int l = max(a.l, a.sum + b.l);
+		int r = max(b.r, b.sum + a.r);
+		return Data(ans, l, r, sum);
+	}
+
+	void build(vector<int> &a, int s, int e, int root) {
+		// base case
+		if (s == e) {
+			segtree[root] = Data(a[s]);
+			return;
+		}
+
+		int mid = (s + e) / 2;
+		build(a, s, mid, 2 * root);
+		build(a, mid + 1, e, 2 * root + 1);
+
+		// self work
+		segtree[root] = f(segtree[2 * root], segtree[2 * root + 1]);
+	}
+
+	void rupd(int s, int e, int root, int l, int r, int val)
+	{
+		propagate(root, s, e);
+
+		if (s > r || e < l)
+			return;
+
+		if (s >= l && e <= r)
+		{
+			//make updates in the current node
+			int width = e - s + 1;
+			segtree[root].sum = (width * val);
+			segtree[root].ans = max(width * val, val);
+			segtree[root].ans = max(segtree[root].ans, 0ll);
+			segtree[root].l = max(width * val, 0ll);
+			segtree[root].r = max(width * val, 0ll);
+			if (s != e)
+			{
+				lazy[2 * root] = val;
+				lazy[2 * root + 1] = val;
+
+				lazy2[2 * root] = true;
+				lazy2[2 * root + 1] = true;
+			}
+			return;
+		}
+
+		int mid = (s + e) / 2;
+
+		rupd(s, mid, 2 * root, l, r, val);
+		rupd(mid + 1, e, 2 * root + 1, l, r, val);
+		segtree[root] = f(segtree[2 * root], segtree[2 * root + 1]);
+	}
+
+	Data query(int s, int e, int root, int l, int r) {  //query with root index set to 1
+		// completely out of range
+		propagate(root, s, e);
+		if (s > r || e < l) {
+			return Data();
+		}
+		// completely in range
+		if (s >= l && e <= r) {
+			return segtree[root];
+		}
+		// partial overlap
+		int mid = (s + e) / 2;
+		Data x = query(s, mid, 2 * root, l, r);
+		Data y = query(mid + 1, e, 2 * root + 1, l, r);
+		return f(x, y);
+	}
+};
+
+
+
+struct Tree {
+	int n;															//number of nodes
+	int LOG;														//height of tree <= 2^LOG
+	vector<int> parent;												//direct parent
+	vector<vector<int>> adjlist;									//adjacency list
+	vector<int> depth;												//depth of node (root is 0)
+
+	vector<vector<int>>up; 										//for binary lifting
+
+
+	vector<int> bigchild;										//largest subtree, -1 if leaf
+	vector<int> top;												//topmost node of the heavy path
+
+	// vector<int> euler_tour;										//euler tour
+	// int tour_iterator;
+	// vector<pll> tour_indexes;
+
+	vector<int> v;
+
+	int dfs(int src, int par)
+	{
+		// tour_indexes[src].first = tour_iterator;     			//EULER TOUR
+		// euler_tour.push_back(src);
+		// tour_iterator++;
+
+		if (par == -1) depth[src] = 0;
+		else depth[src] = depth[par] + 1;
+
+		parent[src] = par;
+
+		int big = -1; int subtree_size = 1;
+		for (auto neighbour : adjlist[src])
+		{
+			if (neighbour != par) {
+				int sz = dfs(neighbour, src);
+
+				if (sz > big)									//HLD
+				{
+					big = sz;
+					bigchild[src] = neighbour;
+				}
+
+				subtree_size += sz;
+			}
+		}
+
+		// tour_indexes[src].second = tour_iterator - 1;			//EULER TOUR
+
+		return subtree_size;
+	}
+
+	void dfsHLD(int src, int par, int Top)						//HLD
+	{
+
+		//If you need to build a segment tree, then keep a vector and push it here
+		// Build segment tree on that vector
+		v.pb(src);
+		top[src] = Top;
+		if (bigchild[src] != -1)
+			dfsHLD(bigchild[src], src, Top);
+
+		for (auto neighbour : adjlist[src])
+		{
+			if (neighbour != bigchild[src] && neighbour != par)
+				dfsHLD(neighbour, src, neighbour);
+		}
+	}
+
+	void binary_lifting()										//LCA Binary Lifting
+	{
+		for (int i = 1; i <= n; i++)
+			up[i][0] = parent[i];
+
+		for (int l = 1; l < LOG; l++)
+		{
+			for (int i = 1; i <= n; i++)
+			{
+				if (up[i][l - 1] != -1)
+					up[i][l] = up[up[i][l - 1]][l - 1];
+			}
+		}
+	}
+
+	int walk(int node, int k)
+	{
+		int i = 0;
+		while (k > 0)
+		{
+			if (k & 1)
+				node = up[node][i];
+			i++; k >>= 1;
+			if (node == -1) break;
+		}
+		return node;
+	}
+
+	int lca(int a, int b)
+	{
+		int da = depth[a], db = depth[b];
+		int diff = abs(da - db);
+
+		if (da > db) a = walk(a, diff);
+		else b = walk(b, diff);
+
+		if (a == b)
+			return a;
+
+		for (int i = LOG - 1; i >= 0; i--)
+		{
+			int pa = walk(a, (1 << i));
+			int pb = walk(b, (1 << i));
+			if (pa != pb)
+			{
+				a = pa; b = pb;
+			}
+		}
+		return up[a][0];
+	}
+
+	Tree(int n, int LOG = 21)
+	{
+		this->LOG = LOG;
+		this->n = n;
+		parent = vector<int>(n + 1);
+		adjlist = vector<vector<int>>(n + 1);
+		depth = vector<int>(n + 1);
+
+		// for Binary Lifting
+		up = vector<vector<int>>(n + 1, vector<int>(LOG, -1));
+
+		// for Heavy Light Decomposition
+		top = vector<int>(n + 1);
+		bigchild = vector<int>(n + 1, -1);
+
+		//for Euler Tours
+		// tour_indexes = vector<pll>(n + 1);
+	}
+
+	void _init(int root = 1)
+	{
+		dfs(root, -1);
+
+		dfsHLD(root, -1, root);
+
+		binary_lifting();
+	}
+
+	void addedge(int a, int b)
+	{
+		adjlist[a].pb(b);
+		adjlist[b].pb(a);
+	}
+};
+
+
+
+int32_t main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+#ifndef ONLINE_JUDGE
+	freopen("input.txt", "r", stdin);
+	freopen("output.txt", "w", stdout);
+#endif
+
+	// id = Data();
+	in(n);
+	vector<int> val(n + 1);
+
+	for (int i = 1; i <= n; i++) cin >> val[i];
+
+	Tree tree(n, 18);
+
+	for (int i = 1; i < n; i++)
+	{
+		in(a); in(b);
+		tree.addedge(a, b);
+	}
+
+	tree._init();
+
+	vector<int> pos(n + 1);
+
+	for (int i = 0; i < n; i++) {
+		pos[tree.v[i]] = i;
+		tree.v[i] = val[tree.v[i]];
+	}
+
+	Segment_Tree segtree(tree.v);
+
+	in(q);
+	while (q--)
+	{
+		in(t);
+		if (t == 1)
+		{
+			in(u); in(v);
+			if (tree.depth[u] < tree.depth[v])
+				swap(u, v);
+			int LCA = tree.lca(u, v);
+			Data left = Data();
+
+			int U, V;
+			U = u; V = LCA;
+			while (1)
+			{
+				int pu = tree.top[U];
+				int pv = tree.top[V];
+				if (pu == pv)
+				{
+					int l = pos[U];
+					int r = pos[V];
+					Data temp = segtree.query(0, n - 1, 1, min(l, r), max(l, r));
+					left = segtree.f(temp, left);
+					break;
+				}
+				if (tree.depth[pu] > tree.depth[pv])
+				{
+					Data temp = segtree.query(0, n - 1, 1, pos[pu], pos[U]);
+					left = segtree.f(temp, left);
+					U = tree.parent[pu];
+				}
+				else
+				{
+					Data temp = segtree.query(0, n - 1, 1, pos[pv], pos[V]);
+					left = segtree.f(temp, left);
+					V = tree.parent[pv];
+				}
+			}
+
+			if (LCA == v)
+			{
+				cout << left.ans << endl;
+				continue;
+			}
+
+			int diff = tree.depth[v] - tree.depth[LCA];
+			V = tree.walk(v, diff - 1);
+			U = v;
+			Data right = Data();
+			while (1)
+			{
+				int pu = tree.top[U];
+				int pv = tree.top[V];
+				if (pu == pv)
+				{
+					int l = pos[U];
+					int r = pos[V];
+					Data temp = segtree.query(0, n - 1, 1, min(l, r), max(l, r));
+					right = segtree.f(temp, right);
+					break;
+				}
+				if (tree.depth[pu] > tree.depth[pv])
+				{
+					Data temp = segtree.query(0, n - 1, 1, pos[pu], pos[U]);
+					right = segtree.f(temp, right);
+					U = tree.parent[pu];
+				}
+				else
+				{
+					Data temp = segtree.query(0, n - 1, 1, pos[pv], pos[V]);
+					right = segtree.f(temp, right);
+					V = tree.parent[pv];
+				}
+			}
+			int ans = max(left.ans, right.ans);
+			ans = max(ans, left.l + right.l);
+			cout << ans << endl;
+		}
+		else
+		{
+			in(u); in(v); in(val);
+			while (1)
+			{
+				int pu = tree.top[u];
+				int pv = tree.top[v];
+				if (pu == pv)
+				{
+					int l = pos[u], r = pos[v];
+					segtree.rupd(0, n - 1, 1, min(l, r), max(l, r), val);
+					break;
+				}
+				if (tree.depth[pu] > tree.depth[pv])
+				{
+					segtree.rupd(0, n - 1, 1, pos[pu], pos[u], val);
+					u = tree.parent[pu];
+				}
+				else
+				{
+					segtree.rupd(0, n - 1, 1, pos[pv], pos[v], val);
+					v = tree.parent[pv];
+				}
+			}
+		}
+	}
+	return 0;
+}
